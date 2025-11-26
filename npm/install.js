@@ -5,7 +5,7 @@ const { execSync } = require('child_process');
 
 // Configuración
 const REPO = 'emersonxinay/agila';
-const VERSION = 'v1.0.0'; // Debe coincidir con el tag de GitHub
+const VERSION = 'v1.1.0'; // Debe coincidir con el tag de GitHub
 const BIN_NAME = process.platform === 'win32' ? 'aguila.exe' : 'aguila';
 
 // Detectar plataforma
