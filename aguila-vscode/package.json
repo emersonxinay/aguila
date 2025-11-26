@@ -2,14 +2,14 @@
     "name": "aguila-vscode",
     "displayName": "ÁGUILA Language",
     "description": "Soporte para el lenguaje de programación ÁGUILA",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "aguila-lang",
     "engines": {
         "vscode": "^1.70.0"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/emersonxinay/agila"
+        "url": "https://github.com/emersonxinay/aguila"
     },
     "categories": [
         "Programming Languages"

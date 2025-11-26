@@ -49,7 +49,7 @@ git push origin main --tags
 
 ### Opción A: Desde la Web (Recomendado)
 
-1. Ve a: https://github.com/emersonxinay/agila/releases/new
+1. Ve a: https://github.com/emersonxinay/aguila/releases/new
 2. Selecciona el tag: `v0.2.0`
 3. Título: `v0.2.0 - VS Code Extension & Standard Library`
 4. Descripción (copiar el texto de abajo)
@@ -137,8 +137,8 @@ npm install -g aguila-lang
 
 ### 📚 Recursos
 - [Extensión VS Code](https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode)
-- [Documentación](https://github.com/emersonxinay/agila)
-- [Ejemplos](https://github.com/emersonxinay/agila/tree/main/ejemplos)
+- [Documentación](https://github.com/emersonxinay/aguila)
+- [Ejemplos](https://github.com/emersonxinay/aguila/tree/main/ejemplos)
 
 ---
 Hecho con ❤️ por Emerson Espinoza
