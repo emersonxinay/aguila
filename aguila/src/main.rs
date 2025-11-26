@@ -13,7 +13,8 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
-        mostrar_ayuda();
+        // Si no hay argumentos, iniciar REPL por defecto
+        cli::cli_repl();
         return;
     }
 
@@ -37,6 +38,13 @@ fn main() {
         "--help" | "-h" => {
             mostrar_ayuda();
         }
+        // Si el primer argumento termina en .ag, ejecutarlo directamente
+        arg if arg.ends_with(".ag") => {
+             if let Err(e) = cli::cli_ejecutar(arg) {
+                eprintln!("Error: {}", e);
+                std::process::exit(1);
+            }
+        }
         _ => {
             eprintln!("Comando desconocido: {}", args[1]);
             mostrar_ayuda();
@@ -47,9 +55,11 @@ fn main() {
 fn mostrar_ayuda() {
     println!("ÁGUILA v{}", VERSION);
     println!();
-    println!("Uso: aguila <comando> [opciones]");
+    println!("Uso:");
+    println!("  aguila                   Inicia el intérprete interactivo (REPL)");
+    println!("  aguila <archivo.ag>      Ejecuta un archivo directamente");
     println!();
-    println!("Comandos:");
+    println!("Comandos explícitos:");
     println!("  ejecutar <archivo.ag>    Ejecuta un archivo ÁGUILA");
     println!("  repl                     Inicia el intérprete interactivo");
     println!("  --version                Muestra la versión");
