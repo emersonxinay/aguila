@@ -43,11 +43,19 @@ union = s1.unir(s2)
 imprimir union  # #{1, 2, 3, 4, 5}
 ```
 
-## 🆕 Novedades en v2.2.1
+## 🆕 Novedades en v2.2.8
 
-- ✨ **Operador de potencia actualizado:** Ahora se usa `**` en lugar de `^` (alineado con Python)
-- 🎯 **REPL mejorado:** Navegación con flechas, bloques multilínea, historial de comandos
-- 🐛 **Correcciones:** Múltiples mejoras de estabilidad
+- 🚀 **Soporte para Algoritmos Avanzados:** El lenguaje ahora es capaz de ejecutar algoritmos complejos como Quicksort, BFS y Fibonacci memoizado de manera eficiente.
+- 🛠️ **Nuevos Métodos Nativos:**
+    - `Lista.a_texto()`: Convierte una lista a su representación en texto.
+    - `Diccionario.insertar(clave, valor)`: Permite insertar o actualizar valores dinámicamente.
+- 🐛 **Correcciones Críticas:**
+    - Solucionado bug en el parser que afectaba bloques anidados (`si`, `mientras`, `funcion`).
+    - Estabilidad mejorada en el runtime para evitar errores de memoria en operaciones recursivas.
+- ✨ **Mejoras Previas:**
+    - Operador de potencia `**` (v2.2.1)
+    - Métodos numéricos: `.redondear()`, `.piso()`, `.techo()` (v2.2.4)
+    - REPL mejorado con historial y limpieza de pantalla (v2.2.2)
 
 ## ⌨️ Snippets y Atajos
 
@@ -94,10 +102,10 @@ Escribe el prefijo y presiona Tab para expandir:
 ### Métodos Nativos
 
 **Listas:**
-`.agregar()`, `.eliminar()`, `.insertar()`, `.longitud()`, `.contiene()`, `.ordenar()`, `.invertir()`, `.limpiar()`, `.copiar()`, `.unir()`, `.sublista()`
+`.agregar()`, `.eliminar()`, `.insertar()`, `.longitud()`, `.contiene()`, `.ordenar()`, `.invertir()`, `.limpiar()`, `.copiar()`, `.unir()`, `.sublista()`, `.a_texto()`
 
 **Diccionarios:**
-`.claves()`, `.valores()`, `.longitud()`, `.contiene()`, `.obtener()`, `.eliminar()`, `.limpiar()`, `.copiar()`
+`.claves()`, `.valores()`, `.longitud()`, `.contiene()`, `.obtener()`, `.eliminar()`, `.limpiar()`, `.copiar()`, `.insertar()`
 
 **Conjuntos (Sets):**
 `.agregar()`, `.eliminar()`, `.contiene()`, `.longitud()`, `.unir()`, `.intersectar()`, `.diferencia()`, `.a_lista()`

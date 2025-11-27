@@ -2,6 +2,8 @@
 
 > **"Lo mismo que Python, pero más veloz y en Español."**
 
+![Versión](https://img.shields.io/badge/versión-v2.2.8-blue)
+
 ÁGUILA es un lenguaje de programación multiparadigma (interpretado y compilado a JS), diseñado para ser expresivo, robusto y completamente en **español**.
 
 ## 🚀 Instalación
@@ -131,7 +133,24 @@ Módulos nativos potentes integrados.
 *   **`mate`**: Funciones matemáticas (`mate.sin`, `mate.cos`, `mate.raiz`, `mate.aleatorio`).
 *   **`fecha`**: Manejo de fechas (`fecha.ahora`, `fecha.formato`).
 
-### 8. Programación Asíncrona
+### 8. Algoritmos Avanzados (Nuevo en v2.2.8)
+ÁGUILA está optimizado para ejecutar algoritmos complejos y estructuras de datos avanzadas.
+
+```aguila
+# Fibonacci con Memoización
+memo = {}
+funcion fib(n) {
+    si n <= 1 { retornar n }
+    clave = n.a_texto()
+    si memo.contiene(clave) { retornar memo.obtener(clave) }
+    res = fib(n-1) + fib(n-2)
+    memo.insertar(clave, res)
+    retornar res
+}
+imprimir fib(50) # Ultra rápido
+```
+
+### 9. Programación Asíncrona
 Soporte nativo para async/await:
 ```aguila
 asincrono funcion obtener_datos() {

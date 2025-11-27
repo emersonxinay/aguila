@@ -44,7 +44,11 @@ pub fn iniciar() {
                             continue;
                         }
                         "limpiar" => {
-                            print!("\x1B[2J\x1B[1;1H");
+                            if cfg!(target_os = "windows") {
+                                let _ = std::process::Command::new("cls").status();
+                            } else {
+                                let _ = std::process::Command::new("clear").status();
+                            }
                             continue;
                         }
                         _ => {}

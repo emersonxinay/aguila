@@ -1,0 +1,128 @@
+# Prueba de Algoritmos Avanzados en Águila
+
+# 1. Quicksort (Recursión + Manipulación de Listas)
+funcion quicksort(lista) {
+    si lista.longitud() <= 1 {
+        retornar lista
+    }
+
+    pivote = lista[0]
+    menores = []
+    mayores = []
+
+    # Usamos sublista para iterar desde el segundo elemento
+    resto = lista.sublista(1, lista.longitud())
+
+    para x en resto {
+        si x <= pivote {
+            menores.agregar(x)
+        } sino {
+            mayores.agregar(x)
+        }
+    }
+
+    retornar quicksort(menores).unir([pivote]).unir(quicksort(mayores)) # Nota: unir retorna null, esto fallará si unir no retorna la lista. Verifiquemos.
+    # Corrección: .unir() en Águila modifica la lista in-place y retorna nulo (según interpreter.rs).
+    # Necesitamos una implementación diferente para concatenar funcionalmente o hacerlo imperativo.
+}
+
+# Implementación corregida de Quicksort para Águila (Imperativo/In-place friendly)
+funcion quicksort_v2(lista) {
+    si lista.longitud() <= 1 { retornar lista }
+    
+    pivote = lista[0]
+    menores = []
+    mayores = []
+    
+    i = 1
+    mientras i < lista.longitud() {
+        x = lista[i]
+        si x <= pivote { menores.agregar(x) }
+        sino { mayores.agregar(x) }
+        i = i + 1
+    }
+    
+    res = quicksort_v2(menores)
+    res.agregar(pivote)
+    
+    parte_mayor = quicksort_v2(mayores)
+    res.unir(parte_mayor) 
+    
+    retornar res
+}
+
+imprimir "--- 1. Quicksort ---"
+desordenada = [64, 34, 25, 12, 22, 11, 90]
+imprimir "Original: " + desordenada.a_texto()
+ordenada = quicksort_v2(desordenada)
+imprimir "Ordenada: " + ordenada.a_texto()
+
+
+# 2. Fibonacci con Memoización (Diccionarios + Recursión)
+memo = {}
+
+funcion fib_memo(n) {
+    si n <= 1 { retornar n }
+    
+    clave = n.a_texto()
+    
+    # Nota: Diccionarios en Águila v2.2.7 usan .contiene() y .obtener()
+    # Asignación indexada memo[clave] = valor debería funcionar si parser lo soporta.
+    # Si no, usaremos un método nativo si existiera, pero por ahora probemos asignación.
+    
+    si memo.contiene(clave) {
+        retornar memo.obtener(clave)
+    }
+    
+    res = fib_memo(n - 1) + fib_memo(n - 2)
+    
+    # Asignación al diccionario
+    memo.insertar(clave, res) 
+    
+    retornar res
+}
+
+imprimir "\n--- 2. Fibonacci Memoizado ---"
+res_fib = fib_memo(10)
+imprimir "Fib(10): " + res_fib.a_texto()
+
+
+# 3. BFS en Grafo (Grafos + Colas + Conjuntos)
+funcion bfs(grafo, inicio) {
+    visitados = conjunto([])
+    cola = [inicio]
+    recorrido = []
+    
+    mientras cola.longitud() > 0 {
+        nodo = cola[0]
+        cola.eliminar(0) # Dequeue
+        
+        si no visitados.contiene(nodo) {
+            visitados.agregar(nodo)
+            recorrido.agregar(nodo)
+            
+            vecinos = grafo.obtener(nodo)
+            si vecinos != nulo {
+                para vecino en vecinos {
+                    si no visitados.contiene(vecino) {
+                        cola.agregar(vecino)
+                    }
+                }
+            }
+        }
+    }
+    retornar recorrido
+}
+
+imprimir "\n--- 3. BFS (Grafo) ---"
+grafo = {
+    "A": ["B", "C"],
+    "B": ["D", "E"],
+    "C": ["F"],
+    "D": [],
+    "E": ["F"],
+    "F": []
+}
+
+resultado_bfs = bfs(grafo, "A")
+imprimir "Recorrido BFS desde A: " + resultado_bfs.a_texto()

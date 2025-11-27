@@ -69,15 +69,40 @@ impl Lexer {
 
     fn leer_numero(&mut self) -> Token {
         let mut numero = String::new();
+        let mut tiene_punto = false;
+
         while let Some(car) = self.car_actual() {
-            if car.is_numeric() || car == '.' {
+            if car.is_numeric() {
                 numero.push(car);
                 self.avanzar();
+            } else if car == '.' {
+                if !tiene_punto {
+                    // Solo consumir el punto si el siguiente carácter es un dígito
+                    // Esto permite que "10.metodo()" se parsee como Numero(10), Punto, Ident(metodo)
+                    // Y que "20.4.5" se parsee como Numero(20.4), Punto, Numero(5)
+                    if let Some(siguiente) = self.car_siguiente() {
+                        if siguiente.is_numeric() {
+                            tiene_punto = true;
+                            numero.push(car);
+                            self.avanzar();
+                            continue;
+                        }
+                    }
+                }
+                // Si ya tiene punto o el siguiente no es dígito, terminamos el número
+                break;
             } else {
                 break;
             }
         }
-        Token::Numero(numero.parse().unwrap_or(0.0))
+        
+        // Parsear el número acumulado
+        if let Ok(num) = numero.parse::<f64>() {
+            Token::Numero(num)
+        } else {
+            // Fallback por si acaso, aunque con la lógica anterior debería ser siempre válido
+            Token::Numero(0.0)
+        }
     }
 
     fn leer_texto(&mut self, delimitador: char) -> Token {

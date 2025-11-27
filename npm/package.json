@@ -1,6 +1,6 @@
 {
     "name": "aguila-lang",
-    "version": "2.1.2",
+    "version": "2.2.8",
     "description": "Lenguaje de programación ÁGUILA - Instalador oficial",
     "bin": {
         "aguila": "cli.js"

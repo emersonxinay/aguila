@@ -263,6 +263,7 @@ impl Parser {
         let condicion = self.parsear_expresion()?;
         self.esperar_con_contexto(Token::LlaveAbre, "para iniciar el bloque 'si'")?;
         let si_bloque = self.parsear_bloque()?;
+        self.esperar(Token::LlaveCierra)?; // Consumir } del bloque si
         
         let mut sino_bloque = None;
         
@@ -276,6 +277,7 @@ impl Parser {
             } else {
                 self.esperar_con_contexto(Token::LlaveAbre, "para iniciar el bloque 'sino'")?;
                 sino_bloque = Some(self.parsear_bloque()?);
+                self.esperar(Token::LlaveCierra)?; // Consumir } del bloque sino
             }
         }
 
@@ -329,6 +331,7 @@ impl Parser {
         let condicion = self.parsear_expresion()?;
         self.esperar_con_contexto(Token::LlaveAbre, "para iniciar el bloque 'mientras'")?;
         let bloque = self.parsear_bloque()?;
+        self.esperar(Token::LlaveCierra)?;
         Ok(Sentencia::Mientras { condicion, bloque })
     }
 
@@ -434,6 +437,7 @@ impl Parser {
 
         self.esperar_con_contexto(Token::LlaveAbre, "para iniciar el cuerpo de la función")?;
         let bloque = self.parsear_bloque()?;
+        self.esperar(Token::LlaveCierra)?; // Consumir } del cuerpo de la función
 
         Ok(Sentencia::Funcion {
             nombre,

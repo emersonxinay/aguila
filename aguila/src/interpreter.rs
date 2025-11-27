@@ -1197,7 +1197,31 @@ impl Interprete {
                             Err("Índices fuera de rango".to_string())
                         }
                     }
+                    "a_texto" => {
+                        let strs: Vec<String> = lista.iter().map(|v| v.a_texto()).collect();
+                        Ok(Value::Texto(format!("[{}]", strs.join(", "))))
+                    }
                     _ => Err(format!("Método '{}' no definido para Lista", metodo)),
+                }
+            }
+            Value::Numero(n) => {
+                match metodo.as_str() {
+                    "redondear" => {
+                        if args.len() == 0 {
+                            Ok(Value::Numero(n.round()))
+                        } else if args.len() == 1 {
+                            let decimales = args[0].a_numero();
+                            let factor = 10f64.powf(decimales);
+                            Ok(Value::Numero((n * factor).round() / factor))
+                        } else {
+                            Err("redondear espera 0 o 1 argumento".to_string())
+                        }
+                    }
+                    "piso" => Ok(Value::Numero(n.floor())),
+                    "techo" => Ok(Value::Numero(n.ceil())),
+                    "abs" => Ok(Value::Numero(n.abs())),
+                    "a_texto" => Ok(Value::Texto(n.to_string())),
+                    _ => Err(format!("Método '{}' no definido para Numero", metodo)),
                 }
             }
             Value::Texto(s) => {
@@ -1236,6 +1260,12 @@ impl Interprete {
                     "valores" => {
                         let valores: Vec<Value> = map.values().cloned().collect();
                         Ok(Value::Lista(Rc::new(RefCell::new(valores))))
+                    }
+                    "insertar" => {
+                        if args.len() != 2 { return Err("insertar espera 2 argumentos (clave, valor)".to_string()); }
+                        let clave = args[0].a_texto();
+                        map.insert(clave, args[1].clone());
+                        Ok(Value::Nulo)
                     }
                     "longitud" => Ok(Value::Numero(map.len() as f64)),
                     "contiene" => {

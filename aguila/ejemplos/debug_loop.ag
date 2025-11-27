@@ -1,0 +1,15 @@
+imprimir "Inicio"
+lista = [3, 1, 2]
+pivote = lista[0]
+menores = []
+mayores = []
+i = 1
+mientras i < lista.longitud() {
+    imprimir "Iteracion " + i.a_texto()
+    x = lista[i]
+    si x <= pivote { menores.agregar(x) }
+    sino { mayores.agregar(x) }
+    i = i + 1
+}
+imprimir "Menores: " + menores.a_texto()
+imprimir "Mayores: " + mayores.a_texto()
