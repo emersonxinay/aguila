@@ -78,7 +78,7 @@ nombre = "Águila" # Comentario al final de línea
 | `/` | División | `10 / 3` (3.33...) |
 | `//` | División Entera | `10 // 3` (3) |
 | `%` | Módulo (Resto) | `10 % 3` (1) |
-| `^` | Potencia | `2 ^ 3` (8) |
+| `**` | Potencia | `2 ** 3` (8) |
 
 #### Comparación
 | Operador | Descripción | Ejemplo |

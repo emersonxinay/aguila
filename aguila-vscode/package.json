@@ -2,7 +2,7 @@
     "name": "aguila-vscode",
     "displayName": "Aguila Language",
     "description": "Soporte para el lenguaje de programación Aguila",
-    "version": "0.1.0",
+    "version": "0.2.3",
     "publisher": "aguila-lang",
     "engines": {
         "vscode": "^1.70.0"
@@ -38,6 +38,12 @@
                 "language": "aguila",
                 "scopeName": "source.aguila",
                 "path": "./syntaxes/aguila.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "aguila",
+                "path": "./snippets/aguila.json"
             }
         ]
     }

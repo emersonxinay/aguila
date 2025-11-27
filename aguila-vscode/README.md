@@ -1,38 +1,122 @@
-# ÁGUILA Language Extension for VS Code
+# 🦅 ÁGUILA - Extensión para VS Code
 
-Extensión oficial de VS Code para el lenguaje de programación ÁGUILA.
+Soporte oficial de VS Code para el lenguaje de programación **ÁGUILA**, un lenguaje moderno en español diseñado para ser intuitivo y educativo.
 
-## Características
+## ✨ Características
 
-- **Resaltado de sintaxis** para archivos `.ag`
-- **Icono personalizado** para archivos ÁGUILA en el explorador
-- **Auto-cierre** de paréntesis, llaves y corchetes
-- **Comentarios** con `//`
+- 🎨 **Resaltado de sintaxis completo** para archivos `.ag`
+- 🔧 **Autocompletado** de palabras clave y métodos nativos
+- 📁 **Icono personalizado** para archivos ÁGUILA
+- 🔄 **Auto-cierre** de paréntesis, llaves y corchetes
+- 💬 **Comentarios** con `#`
+- 🌈 **Soporte para interpolación de strings** con `f"..."`
 
-## Instalación
+## 📦 Instalación
 
-### Opción 1: Instalación Manual (Desarrollo)
-1. Copia la carpeta `aguila-vscode` a `~/.vscode/extensions/`
-2. Reinicia VS Code
+Busca "Aguila" en el Marketplace de VS Code o instala desde la terminal:
 
-### Opción 2: Desde VSIX (Próximamente)
 ```bash
-code --install-extension aguila-vscode-0.1.0.vsix
+code --install-extension aguila-lang.aguila-vscode
 ```
 
-## Uso
+## 🚀 Uso Rápido
 
-Abre cualquier archivo con extensión `.ag` y el resaltado de sintaxis se aplicará automáticamente.
+Crea un archivo con extensión `.ag` y comienza a programar:
 
-## Palabras Clave Soportadas
+```aguila
+# Hola Mundo
+imprimir "¡Hola, mundo!"
 
-- Control de flujo: `si`, `sino`, `mientras`, `para`, `retornar`
-- Funciones: `funcion`, `asincrono`, `esperar`
-- Clases: `clase`, `nuevo`, `this`
-- Módulos: `importar`
-- Manejo de errores: `intentar`, `capturar`
-- Constantes: `verdadero`, `falso`, `nulo`
+# Operadores aritméticos
+potencia = 2 ** 3  # 8 (nuevo en v2.2.1: ** en lugar de ^)
+division_entera = 10 // 3  # 3
 
-## Licencia
+# Estructuras de datos
+numeros = [1, 2, 3, 4, 5]
+numeros.agregar(6)
+imprimir numeros.longitud()  # 6
 
-MIT
+# Conjuntos (nuevo en v2.2.0)
+s1 = conjunto([1, 2, 3])
+s2 = conjunto([3, 4, 5])
+union = s1.unir(s2)
+imprimir union  # #{1, 2, 3, 4, 5}
+```
+
+## 🆕 Novedades en v2.2.1
+
+- ✨ **Operador de potencia actualizado:** Ahora se usa `**` en lugar de `^` (alineado con Python)
+- 🎯 **REPL mejorado:** Navegación con flechas, bloques multilínea, historial de comandos
+- 🐛 **Correcciones:** Múltiples mejoras de estabilidad
+
+## ⌨️ Snippets y Atajos
+
+### Snippets Disponibles
+Escribe el prefijo y presiona Tab para expandir:
+
+- `fun` → Función completa
+- `si` → Condicional si
+- `sisi` → Si-sino
+- `para` → Bucle para-en
+- `mientras` → Bucle mientras
+- `clase` → Clase con constructor
+- `try` → Intentar-capturar
+- `segun` → Switch/match
+- `imp` → imprimir
+- `dict` → Diccionario
+- `conjunto` → Conjunto
+
+### Atajos de Teclado
+- **Ctrl+/** o **Cmd+/** → Comentar/descomentar línea con `#`
+- **Ctrl+K Ctrl+C** → Comentar selección
+- **Ctrl+K Ctrl+U** → Descomentar selección
+- **Enter** en comentario → Auto-continúa con `# `
+
+## 📚 Sintaxis Soportada
+
+### Palabras Clave
+- **Control de flujo:** `si`, `sino`, `mientras`, `para`, `en`, `hasta`, `segun`, `caso`, `defecto`
+- **Funciones:** `funcion`, `retornar`, `asincrono`, `esperar`
+- **Clases:** `clase`, `nuevo`, `this`
+- **Módulos:** `importar`
+- **Errores:** `intentar`, `capturar`
+- **Constantes:** `verdadero`, `falso`, `nulo`
+
+### Tipos de Datos
+- `Numero`, `Texto`, `Logico`, `Lista`, `Diccionario`, `Conjunto`
+
+### Operadores
+- **Aritméticos:** `+`, `-`, `*`, `/`, `//` (división entera), `%` (módulo), `**` (potencia)
+- **Comparación:** `==`, `!=`, `>`, `<`, `>=`, `<=`
+- **Lógicos:** `y`, `o`, `no`
+- **Asignación:** `=`, `+=`, `-=`
+
+### Métodos Nativos
+
+**Listas:**
+`.agregar()`, `.eliminar()`, `.insertar()`, `.longitud()`, `.contiene()`, `.ordenar()`, `.invertir()`, `.limpiar()`, `.copiar()`, `.unir()`, `.sublista()`
+
+**Diccionarios:**
+`.claves()`, `.valores()`, `.longitud()`, `.contiene()`, `.obtener()`, `.eliminar()`, `.limpiar()`, `.copiar()`
+
+**Conjuntos (Sets):**
+`.agregar()`, `.eliminar()`, `.contiene()`, `.longitud()`, `.unir()`, `.intersectar()`, `.diferencia()`, `.a_lista()`
+
+**Texto:**
+`.longitud()`, `.mayusculas()`, `.minusculas()`, `.contiene()`, `.reemplazar()`, `.dividir()`, `.recortar()`
+
+### Funciones Globales
+- `imprimir()` - Imprime en consola
+- `leer()` - Lee entrada del usuario (con inferencia de tipos)
+- `afirmar()` - Aserciones para testing
+- `conjunto()` - Crea un conjunto
+
+## 🔗 Enlaces
+
+- [Repositorio en GitHub](https://github.com/emersonxinay/aguila)
+- [Documentación completa](https://github.com/emersonxinay/aguila/blob/main/DOCUMENTACION.md)
+- [Reportar un problema](https://github.com/emersonxinay/aguila/issues)
+
+## 📝 Licencia
+
+MIT © 2025 Emerson Espinoza

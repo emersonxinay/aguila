@@ -1,0 +1,52 @@
+# Prueba de resaltado de sintaxis
+
+# Operadores aritméticos
+suma = 5 + 3
+resta = 10 - 4
+multiplicacion = 6 * 7
+division = 20 / 4
+division_entera = 20 // 3
+modulo = 10 % 3
+potencia = 2 ** 8  # Esto debería resaltarse correctamente
+
+# Operadores de comparación
+igual = a == b
+diferente = a != b
+mayor = a > b
+menor = a < b
+
+# Operadores lógicos
+resultado = verdadero y falso
+resultado2 = verdadero o falso
+negacion = no verdadero
+
+# Estructuras de datos
+lista = [1, 2, 3]
+diccionario = {"clave": "valor"}
+conjunto_var = conjunto([1, 2, 3])
+
+# Métodos
+lista.agregar(4)
+lista.longitud()
+diccionario.claves()
+conjunto_var.unir(otro)
+
+# Funciones
+funcion calcular(x, y) {
+    retornar x ** y
+}
+
+# Control de flujo
+si x > 0 {
+    imprimir "Positivo"
+} sino {
+    imprimir "Negativo"
+}
+
+para i en [1, 2, 3] {
+    imprimir i
+}
+
+mientras x < 10 {
+    x = x + 1
+}

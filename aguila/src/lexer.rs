@@ -203,7 +203,12 @@ impl Lexer {
             }
             Some('*') => {
                 self.avanzar();
-                Token::Por
+                if self.car_actual() == Some('*') {
+                    self.avanzar();
+                    Token::Potencia
+                } else {
+                    Token::Por
+                }
             }
             Some('/') => {
                 self.avanzar();
@@ -217,10 +222,6 @@ impl Lexer {
             Some('%') => {
                 self.avanzar();
                 Token::Modulo
-            }
-            Some('^') => {
-                self.avanzar();
-                Token::Potencia
             }
             Some('(') => {
                 self.avanzar();
