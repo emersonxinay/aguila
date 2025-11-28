@@ -101,6 +101,7 @@ impl Parser {
             Token::Mientras => self.parsear_mientras(),
             Token::Para => self.parsear_para(),
             Token::Retornar => self.parsear_retornar(),
+            Token::Romper => self.parsear_romper(),
             Token::Funcion => self.parsear_funcion(false),
             Token::Asincrono => {
                 self.avanzar(); // Consumir 'asincrono'
@@ -179,8 +180,23 @@ impl Parser {
                         Ok(Sentencia::Expresion(expr))
                     }
                     _ => {
-                        self.posicion -= 1;
+                        // Puede ser expresión o asignación a índice
+                        self.posicion -= 1; // Retroceder para parsear desde identificador
                         let expr = self.parsear_expresion()?;
+                        
+                        // Verificar si es asignación a índice: lista[i] = valor
+                        if let Expresion::AccesoIndice { objeto, indice } = &expr {
+                            if self.token_actual() == &Token::Asignacion {
+                                self.avanzar(); // Consumir '='
+                                let valor = self.parsear_expresion()?;
+                                return Ok(Sentencia::AsignacionIndice {
+                                    objeto: (**objeto).clone(),
+                                    indice: (**indice).clone(),
+                                    valor,
+                                });
+                            }
+                        }
+                        
                         Ok(Sentencia::Expresion(expr))
                     }
                 }
@@ -256,6 +272,11 @@ impl Parser {
             let expr = self.parsear_expresion()?;
             Ok(Sentencia::Retorno(Some(expr)))
         }
+    }
+
+    fn parsear_romper(&mut self) -> Result<Sentencia, String> {
+        self.esperar(Token::Romper)?;
+        Ok(Sentencia::Romper)
     }
 
     fn parsear_si(&mut self) -> Result<Sentencia, String> {

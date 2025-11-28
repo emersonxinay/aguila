@@ -1,0 +1,7 @@
+# Test asignación a lista
+lista = [1, 2, 3, 4, 5]
+imprimir lista
+
+lista[0] = 100
+lista[4] = 500
+imprimir lista

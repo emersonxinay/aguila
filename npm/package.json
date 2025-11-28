@@ -1,7 +1,7 @@
 {
     "name": "aguila-lang",
-    "version": "2.2.8",
-    "description": "Lenguaje de programación ÁGUILA - Instalador oficial",
+    "version": "2.3.0",
+    "description": "Lenguaje de programación Águila - Sintaxis en español, velocidad de Rust",
     "bin": {
         "aguila": "cli.js"
     },

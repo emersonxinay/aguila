@@ -353,6 +353,7 @@ impl Lexer {
                         "segun" => Token::Segun,
                         "caso" => Token::Caso,
                         "defecto" => Token::Defecto,
+                        "romper" => Token::Romper,
                         "y" => Token::Y,
                         "o" => Token::O,
                         "no" => Token::No,

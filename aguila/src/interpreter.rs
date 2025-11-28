@@ -15,6 +15,7 @@ pub struct Interprete {
     funciones: HashMap<String, (Vec<(String, Option<String>)>, Option<String>, Vec<Sentencia>, bool)>,
     clases: HashMap<String, (Option<String>, Vec<(String, Option<String>)>, Vec<(String, Vec<(String, Option<String>)>, Vec<Sentencia>)>)>,
     retorno_actual: Option<Value>,
+    romper_actual: bool,
 }
 
 impl Interprete {
@@ -24,6 +25,7 @@ impl Interprete {
             funciones: HashMap::new(),
             clases: HashMap::new(),
             retorno_actual: None,
+            romper_actual: false,
         };
         interprete.registrar_funciones_nativas();
         interprete.registrar_modulo_db();
@@ -450,6 +452,41 @@ impl Interprete {
                 }
                 Ok(Some(val))
             }
+            Sentencia::AsignacionIndice {
+                objeto,
+                indice,
+                valor,
+            } => {
+                let obj_val = self.evaluar_expresion(objeto)?;
+                let idx_val = self.evaluar_expresion(indice)?;
+                let new_val = self.evaluar_expresion(valor)?;
+                
+                match obj_val {
+                    Value::Lista(lista) => {
+                        if let Value::Numero(idx) = idx_val {
+                            let idx_usize = idx as usize;
+                            let mut list_mut = lista.borrow_mut();
+                            if idx_usize < list_mut.len() {
+                                list_mut[idx_usize] = new_val.clone();
+                                Ok(Some(new_val))
+                            } else {
+                                Err(format!("Índice {} fuera de rango (longitud: {})", idx_usize, list_mut.len()))
+                            }
+                        } else {
+                            Err("El índice de lista debe ser un número".to_string())
+                        }
+                    }
+                    Value::Diccionario(dict) => {
+                        if let Value::Texto(clave) = idx_val {
+                            dict.borrow_mut().insert(clave, new_val.clone());
+                            Ok(Some(new_val))
+                        } else {
+                            Err("La clave de diccionario debe ser texto".to_string())
+                        }
+                    }
+                    _ => Err("Solo se puede asignar a índices de listas o diccionarios".to_string()),
+                }
+            }
             Sentencia::Expresion(expr) => {
                 let val = self.evaluar_expresion(expr)?;
                 Ok(Some(val))
@@ -487,6 +524,14 @@ impl Interprete {
                     }
                     for sent in bloque {
                         self.ejecutar_sentencia(sent)?;
+                        if self.romper_actual {
+                            self.romper_actual = false;
+                            break;
+                        }
+                    }
+                    if self.romper_actual {
+                        self.romper_actual = false;
+                        break;
                     }
                 }
                 Ok(None)
@@ -498,27 +543,49 @@ impl Interprete {
             } => {
                 let iter_val = self.evaluar_expresion(iterador)?;
                 match iter_val {
-                    Value::Lista(items) => {
-                        for item in items.borrow().iter() {
+                    Value::Lista(lista) => {
+                        for item in lista.borrow().iter() {
                             if let Some(scope) = self.variables.last_mut() {
                                 scope.borrow_mut().insert(variable.clone(), item.clone());
                             }
                             for sent in bloque {
                                 self.ejecutar_sentencia(sent)?;
+                                if self.romper_actual {
+                                    self.romper_actual = false;
+                                    return Ok(None);
+                                }
                             }
                         }
                     }
-                    Value::Diccionario(map) => {
-                        for (key, _) in map.borrow().iter() {
+                    Value::Diccionario(dict) => {
+                        for (clave, _valor) in dict.borrow().iter() {
                             if let Some(scope) = self.variables.last_mut() {
-                                scope.borrow_mut().insert(variable.clone(), Value::Texto(key.clone()));
+                                scope.borrow_mut().insert(variable.clone(), Value::Texto(clave.clone()));
                             }
                             for sent in bloque {
                                 self.ejecutar_sentencia(sent)?;
+                                if self.romper_actual {
+                                    self.romper_actual = false;
+                                    return Ok(None);
+                                }
                             }
                         }
                     }
-                    _ => return Err("No se puede iterar sobre este tipo".to_string()),
+                    Value::Conjunto(set) => {
+                        for item in set.borrow().iter() {
+                            if let Some(scope) = self.variables.last_mut() {
+                                scope.borrow_mut().insert(variable.clone(), item.clone());
+                            }
+                            for sent in bloque {
+                                self.ejecutar_sentencia(sent)?;
+                                if self.romper_actual {
+                                    self.romper_actual = false;
+                                    return Ok(None);
+                                }
+                            }
+                        }
+                    }
+                    _ => return Err("Solo se puede iterar sobre listas, diccionarios o conjuntos".to_string()),
                 }
                 Ok(None)
             }
@@ -534,9 +601,12 @@ impl Interprete {
                     }
                     for sent in bloque {
                         self.ejecutar_sentencia(sent)?;
+                        if self.romper_actual {
+                            self.romper_actual = false;
+                            return Ok(None);
+                        }
                     }
                 }
-
                 Ok(None)
             }
             Sentencia::Funcion {
@@ -693,6 +763,10 @@ impl Interprete {
                     Value::Nulo
                 };
                 self.retorno_actual = Some(val);
+                Ok(None)
+            }
+            Sentencia::Romper => {
+                self.romper_actual = true;
                 Ok(None)
             }
         }
@@ -1141,6 +1215,29 @@ impl Interprete {
                     }
                     "longitud" => {
                         Ok(Value::Numero(lista.len() as f64))
+                    }
+                    "suma" => {
+                        // O(n) - suma de todos los números
+                        let sum: f64 = lista.iter()
+                            .filter_map(|v| if let Value::Numero(n) = v { Some(n) } else { None })
+                            .sum();
+                        Ok(Value::Numero(sum))
+                    }
+                    "minimo" => {
+                        // O(n) - encuentra el mínimo
+                        lista.iter()
+                            .filter_map(|v| if let Value::Numero(n) = v { Some(*n) } else { None })
+                            .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+                            .map(Value::Numero)
+                            .ok_or("Lista vacía o sin números".to_string())
+                    }
+                    "maximo" => {
+                        // O(n) - encuentra el máximo
+                        lista.iter()
+                            .filter_map(|v| if let Value::Numero(n) = v { Some(*n) } else { None })
+                            .max_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+                            .map(Value::Numero)
+                            .ok_or("Lista vacía o sin números".to_string())
                     }
                     "insertar" => {
                         if args.len() != 2 { return Err("insertar espera 2 argumentos (indice, valor)".to_string()); }

@@ -105,7 +105,7 @@
                 },
                 {
                     "name": "support.function.method.aguila",
-                    "match": "\\.(agregar|eliminar|insertar|longitud|contiene|ordenar|invertir|limpiar|copiar|unir|sublista|claves|valores|obtener|intersectar|diferencia|a_lista|mayusculas|minusculas|reemplazar|dividir|recortar|conectar|consulta|ejecutar|cerrar|parsear|stringificar|escribir|sin|cos|tan|sqrt|aleatorio|a_texto|redondear|piso|techo|abs)\\b"
+                    "match": "\\.(agregar|eliminar|insertar|longitud|contiene|ordenar|invertir|limpiar|copiar|unir|sublista|claves|valores|obtener|intersectar|diferencia|a_lista|mayusculas|minusculas|reemplazar|dividir|recortar|conectar|consulta|ejecutar|cerrar|parsear|stringificar|escribir|leer|sin|cos|tan|sqrt|aleatorio|suma|minimo|maximo|a_texto|redondear|piso|techo|abs)\\b"
                 },
                 {
                     "name": "entity.name.function.aguila",

@@ -29,6 +29,7 @@ pub enum Token {
     Segun,
     Caso,
     Defecto,
+    Romper,
 
     // Operadores
     Mas,
@@ -73,6 +74,11 @@ pub enum Sentencia {
     Asignacion {
         nombre: String,
         tipo: Option<String>,
+        valor: Expresion,
+    },
+    AsignacionIndice {
+        objeto: Expresion,
+        indice: Expresion,
         valor: Expresion,
     },
     Expresion(Expresion),
@@ -125,6 +131,7 @@ pub enum Sentencia {
         casos: Vec<(Expresion, Vec<Sentencia>)>,
         defecto: Option<Vec<Sentencia>>,
     },
+    Romper,
 }
 
 #[derive(Debug, Clone, PartialEq)]

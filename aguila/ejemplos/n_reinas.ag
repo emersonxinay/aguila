@@ -1,0 +1,58 @@
+# N-Reinas - Ahora funcional con asignación a índices
+funcion n_reinas(n) {
+    tablero = []
+    para i = 0 hasta n {
+        tablero.agregar(-1)
+    }
+    
+    soluciones = []
+    resolver(0, tablero, soluciones, n)
+    retornar soluciones
+}
+
+funcion resolver(fila, tablero, soluciones, n) {
+    si fila == n {
+        soluciones.agregar(tablero.copiar())
+        retornar
+    }
+
+    para col = 0 hasta n {
+        si valido(tablero, fila, col) {
+            tablero[fila] = col  # ✅ Ahora funciona!
+            resolver(fila + 1, tablero, soluciones, n)
+            tablero[fila] = -1   # Backtrack
+        }
+    }
+}
+
+funcion valido(tablero, fila, col) {
+    para f = 0 hasta fila {
+        si tablero[f] == col {
+            retornar falso
+        }
+        
+        # Verificar diagonales
+        diff_col = tablero[f] - col
+        si diff_col < 0 {
+            diff_col = -diff_col
+        }
+        diff_fila = f - fila
+        si diff_fila < 0 {
+            diff_fila = -diff_fila
+        }
+        
+        si diff_col == diff_fila {
+            retornar falso
+        }
+    }
+    retornar verdadero
+}
+
+# Probar con 4 reinas
+imprimir "Resolviendo 4-Reinas..."
+soluciones = n_reinas(4)
+imprimir a"Encontradas {soluciones.longitud()} soluciones"
+
+para sol en soluciones {
+    imprimir sol
+}
