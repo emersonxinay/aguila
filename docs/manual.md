@@ -11,7 +11,7 @@ Para probar el lenguaje rápidamente, simplemente ejecuta el comando `aguila` en
 
 ```bash
 $ aguila
-ÁGUILA v2.2.8
+ÁGUILA vX.X.X
 Escribe 'salir' para terminar, o 'ayuda' para ver comandos.
 > imprimir "Hola"
 Hola
@@ -147,6 +147,10 @@ activo: Logico = falso
 | `copiar()` | Devuelve una copia de la lista. | `l2 = l1.copiar()` |
 | `unir(sep)` | Une elementos en un texto con separador. | `["a","b"].unir("-")` -> `"a-b"` |
 | `sublista(i, f)` | Devuelve sublista desde `i` hasta `f` (excluido). | `l.sublista(0, 2)` |
+| `suma()` | Suma todos los elementos (solo números). | `[1, 2, 3].suma()` -> `6` |
+| `minimo()` | Devuelve el valor más bajo. | `[1, 5, 2].minimo()` -> `1` |
+| `maximo()` | Devuelve el valor más alto. | `[1, 5, 2].maximo()` -> `5` |
+| `promedio()` | Calcula el promedio (solo números). | `[2, 4].promedio()` -> `3` |
 
 #### Métodos de Texto
 | Método | Descripción | Ejemplo |
@@ -158,6 +162,14 @@ activo: Logico = falso
 | `reemplazar(a, b)` | Reemplaza `a` por `b` | `"hola".reemplazar("h", "H")` |
 | `dividir(sep)` | Divide el texto en una lista | `"a,b".dividir(",")` |
 | `recortar()` | Elimina espacios al inicio y final | `" a ".recortar()` |
+
+#### Métodos de Números
+| Método | Descripción | Ejemplo |
+|---|---|---|
+| `abs()` | Valor absoluto | `(-5).abs()` -> `5` |
+| `redondear()` | Redondea al entero más cercano | `(3.6).redondear()` -> `4` |
+| `piso()` | Redondea hacia abajo | `(3.9).piso()` -> `3` |
+| `techo()` | Redondea hacia arriba | `(3.1).techo()` -> `4` |
 
 ### Testing Integrado
 Águila incluye una función nativa para facilitar la creación de pruebas y verificar el correcto funcionamiento de tu código.
@@ -190,6 +202,10 @@ usuario = {
     "edad": 30
 }
 imprimir usuario["nombre"]
+
+# Modificación por índice/clave (Nuevo en v2.4)
+numeros[0] = 100       # Ahora numeros es [100, 2, 3, 4, 5]
+usuario["edad"] = 31   # Actualiza el valor
 ```
 
 ---

@@ -21,6 +21,15 @@
     ./probar.sh
     ```
 
+## 🛡️ Política de Compatibilidad
+
+Nos tomamos muy en serio la estabilidad. Seguimos **Versionado Semántico (SemVer)**:
+
+1.  **Compatibilidad hacia atrás:** El código escrito para Águila v2.0 debe funcionar en v2.1, v2.2, etc.
+2.  **Pruebas de Regresión:** Antes de cada PR, ejecutamos `pruebas/compatibilidad/`. Estos archivos son sagrados: si tu cambio rompe uno de estos tests, tu cambio será rechazado (a menos que sea una corrección de seguridad crítica o un cambio Major v3.0).
+
+## 🧪 Cómo probar tus cambios
+
 ## 🚀 Estructura del Proyecto
 
 - `aguila/`: Código fuente del compilador/intérprete (Rust).
