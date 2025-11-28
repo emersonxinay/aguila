@@ -7,7 +7,7 @@ Instalador oficial del lenguaje de programación **ÁGUILA** para Node.js.
 ## 🚀 Instalación
 
 ```bash
-npm install -g aguila
+npm install -g aguila-lang
 ```
 
 Esto descargará automáticamente el binario optimizado para tu sistema operativo (Windows, macOS o Linux).
