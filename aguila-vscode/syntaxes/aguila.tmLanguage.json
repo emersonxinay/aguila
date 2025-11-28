@@ -32,7 +32,7 @@
             "patterns": [
                 {
                     "name": "keyword.control.aguila",
-                    "match": "\\b(si|sino|mientras|para|en|hasta|retornar|importar|asincrono|esperar|nuevo|intentar|capturar|clase|funcion|segun|caso|defecto|imprimir)\\b"
+                    "match": "\\b(si|sino|mientras|para|en|hasta|retornar|importar|asincrono|esperar|nuevo|intentar|capturar|clase|funcion|segun|caso|defecto|imprimir|romper)\\b"
                 },
                 {
                     "name": "keyword.operator.logical.aguila",

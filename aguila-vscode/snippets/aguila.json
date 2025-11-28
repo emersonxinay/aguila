@@ -46,6 +46,11 @@
         ],
         "description": "Bucle mientras"
     },
+    "Romper": {
+        "prefix": "romper",
+        "body": "romper",
+        "description": "Romper bucle"
+    },
     "Clase": {
         "prefix": "clase",
         "body": [
