@@ -2,6 +2,9 @@
 
 > **"La simplicidad de Python. La velocidad de Rust. Todo en Español."**
 
+<img src="aguila-vscode/icon.png" alt="Icono de Águila" width="100" height="100">
+
+
 [![NPM Version](https://img.shields.io/npm/v/aguila-lang)](https://www.npmjs.com/package/aguila-lang)
 [![VS Code Extension](https://img.shields.io/visual-studio-marketplace/v/aguila-lang.aguila-vscode)](https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
