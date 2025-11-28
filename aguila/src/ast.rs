@@ -30,6 +30,7 @@ pub enum Token {
     Caso,
     Defecto,
     Romper,
+    Continuar,
 
     // Operadores
     Mas,
@@ -81,6 +82,11 @@ pub enum Sentencia {
         indice: Expresion,
         valor: Expresion,
     },
+    AsignacionAtributo {
+        objeto: Expresion,
+        atributo: String,
+        valor: Expresion,
+    },
     Expresion(Expresion),
     Si {
         condicion: Expresion,
@@ -98,8 +104,8 @@ pub enum Sentencia {
     },
     ParaRango {
         variable: String,
-        inicio: i64,
-        fin: i64,
+        inicio: Expresion,
+        fin: Expresion,
         bloque: Vec<Sentencia>,
     },
     Funcion {
@@ -132,6 +138,7 @@ pub enum Sentencia {
         defecto: Option<Vec<Sentencia>>,
     },
     Romper,
+    Continuar,
 }
 
 #[derive(Debug, Clone, PartialEq)]

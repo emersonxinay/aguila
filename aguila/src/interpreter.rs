@@ -16,6 +16,7 @@ pub struct Interprete {
     clases: HashMap<String, (Option<String>, Vec<(String, Option<String>)>, Vec<(String, Vec<(String, Option<String>)>, Vec<Sentencia>)>)>,
     retorno_actual: Option<Value>,
     romper_actual: bool,
+    continuar_actual: bool,
 }
 
 impl Interprete {
@@ -26,6 +27,7 @@ impl Interprete {
             clases: HashMap::new(),
             retorno_actual: None,
             romper_actual: false,
+            continuar_actual: false,
         };
         interprete.registrar_funciones_nativas();
         interprete.registrar_modulo_db();
@@ -284,6 +286,7 @@ impl Interprete {
                 match listener_clone.accept() {
                     Ok((stream, addr)) => {
                         println!("Conexión aceptada de: {}", addr);
+                        let stream_clone = stream.try_clone().expect("Error al clonar stream");
                         let stream = Rc::new(RefCell::new(stream));
                         
                         let mut cliente_obj = HashMap::new();
@@ -432,11 +435,12 @@ impl Interprete {
     }
 
     pub fn ejecutar(&mut self, programa: Programa) -> Result<Option<Value>, String> {
-        let mut ultimo_valor = None;
-        for sentencia in programa.sentencias {
-            ultimo_valor = self.ejecutar_sentencia(&sentencia)?;
+        for sent in programa.sentencias {
+            if let Some(val) = self.ejecutar_sentencia(&sent)? {
+                return Ok(Some(val));
+            }
         }
-        Ok(ultimo_valor)
+        Ok(None)
     }
 
     fn ejecutar_sentencia(&mut self, sentencia: &Sentencia) -> Result<Option<Value>, String> {
@@ -450,7 +454,7 @@ impl Interprete {
                 if let Some(scope) = self.variables.last_mut() {
                     scope.borrow_mut().insert(nombre.clone(), val.clone());
                 }
-                Ok(Some(val))
+                Ok(None)
             }
             Sentencia::AsignacionIndice {
                 objeto,
@@ -468,7 +472,7 @@ impl Interprete {
                             let mut list_mut = lista.borrow_mut();
                             if idx_usize < list_mut.len() {
                                 list_mut[idx_usize] = new_val.clone();
-                                Ok(Some(new_val))
+                                Ok(None)
                             } else {
                                 Err(format!("Índice {} fuera de rango (longitud: {})", idx_usize, list_mut.len()))
                             }
@@ -479,7 +483,7 @@ impl Interprete {
                     Value::Diccionario(dict) => {
                         if let Value::Texto(clave) = idx_val {
                             dict.borrow_mut().insert(clave, new_val.clone());
-                            Ok(Some(new_val))
+                            Ok(None)
                         } else {
                             Err("La clave de diccionario debe ser texto".to_string())
                         }
@@ -487,9 +491,24 @@ impl Interprete {
                     _ => Err("Solo se puede asignar a índices de listas o diccionarios".to_string()),
                 }
             }
+            Sentencia::AsignacionAtributo {
+                objeto,
+                atributo,
+                valor,
+            } => {
+                let obj_val = self.evaluar_expresion(objeto)?;
+                let new_val = self.evaluar_expresion(valor)?;
+                
+                if let Value::Instancia { atributos, .. } = obj_val {
+                    atributos.borrow_mut().insert(atributo.clone(), new_val.clone());
+                    Ok(None)
+                } else {
+                    Err(format!("Solo se pueden asignar atributos a instancias de clase, no a {:?}", obj_val))
+                }
+            }
             Sentencia::Expresion(expr) => {
-                let val = self.evaluar_expresion(expr)?;
-                Ok(Some(val))
+                self.evaluar_expresion(expr)?;
+                Ok(None)
             }
             Sentencia::Imprimir(expr) => {
                 let val = self.evaluar_expresion(expr)?;
@@ -504,11 +523,15 @@ impl Interprete {
                 let cond = self.evaluar_expresion(condicion)?;
                 if cond.a_booleano() {
                     for sent in si_bloque {
-                        self.ejecutar_sentencia(sent)?;
+                        if let Some(val) = self.ejecutar_sentencia(sent)? {
+                            return Ok(Some(val));
+                        }
                     }
-                } else if let Some(bloque) = sino_bloque {
-                    for sent in bloque {
-                        self.ejecutar_sentencia(sent)?;
+                } else if let Some(sino) = sino_bloque {
+                    for sent in sino {
+                        if let Some(val) = self.ejecutar_sentencia(sent)? {
+                            return Ok(Some(val));
+                        }
                     }
                 }
                 Ok(None)
@@ -523,13 +546,19 @@ impl Interprete {
                         break;
                     }
                     for sent in bloque {
-                        self.ejecutar_sentencia(sent)?;
+                        if let Some(val) = self.ejecutar_sentencia(sent)? {
+                            return Ok(Some(val));
+                        }
                         if self.romper_actual {
                             self.romper_actual = false;
-                            break;
+                            return Ok(None);
+                        }
+                        if self.continuar_actual {
+                            self.continuar_actual = false;
+                            break; // Rompe el bucle interno para pasar a la siguiente iteración del 'mientras'
                         }
                     }
-                    if self.romper_actual {
+                    if self.romper_actual { // Si se rompió el bucle interno, también romper el externo
                         self.romper_actual = false;
                         break;
                     }
@@ -549,10 +578,16 @@ impl Interprete {
                                 scope.borrow_mut().insert(variable.clone(), item.clone());
                             }
                             for sent in bloque {
-                                self.ejecutar_sentencia(sent)?;
+                                if let Some(val) = self.ejecutar_sentencia(sent)? {
+                                    return Ok(Some(val));
+                                }
                                 if self.romper_actual {
                                     self.romper_actual = false;
                                     return Ok(None);
+                                }
+                                if self.continuar_actual {
+                                    self.continuar_actual = false;
+                                    break;
                                 }
                             }
                         }
@@ -563,10 +598,16 @@ impl Interprete {
                                 scope.borrow_mut().insert(variable.clone(), Value::Texto(clave.clone()));
                             }
                             for sent in bloque {
-                                self.ejecutar_sentencia(sent)?;
+                                if let Some(val) = self.ejecutar_sentencia(sent)? {
+                                    return Ok(Some(val));
+                                }
                                 if self.romper_actual {
                                     self.romper_actual = false;
                                     return Ok(None);
+                                }
+                                if self.continuar_actual {
+                                    self.continuar_actual = false;
+                                    break;
                                 }
                             }
                         }
@@ -577,10 +618,16 @@ impl Interprete {
                                 scope.borrow_mut().insert(variable.clone(), item.clone());
                             }
                             for sent in bloque {
-                                self.ejecutar_sentencia(sent)?;
+                                if let Some(val) = self.ejecutar_sentencia(sent)? {
+                                    return Ok(Some(val));
+                                }
                                 if self.romper_actual {
                                     self.romper_actual = false;
                                     return Ok(None);
+                                }
+                                if self.continuar_actual {
+                                    self.continuar_actual = false;
+                                    break;
                                 }
                             }
                         }
@@ -595,15 +642,27 @@ impl Interprete {
                 fin,
                 bloque,
             } => {
-                for i in *inicio..*fin {
+                let inicio_val = self.evaluar_expresion(inicio)?;
+                let fin_val = self.evaluar_expresion(fin)?;
+                
+                let start = inicio_val.a_numero() as i64;
+                let end = fin_val.a_numero() as i64;
+                
+                for i in start..end {
                     if let Some(scope) = self.variables.last_mut() {
                         scope.borrow_mut().insert(variable.clone(), Value::Numero(i as f64));
                     }
                     for sent in bloque {
-                        self.ejecutar_sentencia(sent)?;
+                        if let Some(val) = self.ejecutar_sentencia(sent)? {
+                            return Ok(Some(val));
+                        }
                         if self.romper_actual {
                             self.romper_actual = false;
                             return Ok(None);
+                        }
+                        if self.continuar_actual {
+                            self.continuar_actual = false;
+                            break;
                         }
                     }
                 }
@@ -756,17 +815,21 @@ impl Interprete {
                 }
                 Ok(None)
             }
-            Sentencia::Retorno(expr_opt) => {
-                let val = if let Some(expr) = expr_opt {
-                    self.evaluar_expresion(expr)?
+            Sentencia::Retorno(expr) => {
+                let val = if let Some(e) = expr {
+                    self.evaluar_expresion(e)?
                 } else {
                     Value::Nulo
                 };
-                self.retorno_actual = Some(val);
-                Ok(None)
+                // println!("DEBUG: Retornando: {:?}", val);
+                return Ok(Some(val));
             }
             Sentencia::Romper => {
                 self.romper_actual = true;
+                Ok(None)
+            }
+            Sentencia::Continuar => {
+                self.continuar_actual = true;
                 Ok(None)
             }
         }
@@ -932,7 +995,9 @@ impl Interprete {
             "^" => Ok(Value::Numero(izq_val.a_numero().powf(der_val.a_numero()))),
             "y" => Ok(Value::Logico(izq_val.a_logico() && der_val.a_logico())),
             "o" => Ok(Value::Logico(izq_val.a_logico() || der_val.a_logico())),
-            "==" => Ok(Value::Logico(izq_val == der_val)),
+            "==" => {
+                Ok(Value::Logico(izq_val == der_val))
+            },
             "!=" => Ok(Value::Logico(izq_val != der_val)),
             ">" => match (&izq_val, &der_val) {
                 (Value::Numero(a), Value::Numero(b)) => Ok(Value::Logico(a > b)),
@@ -957,6 +1022,8 @@ impl Interprete {
             _ => Err(format!("Operador {} no reconocido", op)),
         }
     }
+
+
 
     fn obtener_variable(&self, nombre: &str) -> Result<Value, String> {
         for scope in self.variables.iter().rev() {
@@ -985,7 +1052,7 @@ impl Interprete {
         // Luego, intenta como función nativa
         // Luego, intenta como función nativa o closure
         if let Some(val) = self.obtener_variable_val(nombre) {
-            match val {
+            return match val {
                 Value::FuncionNativa(f) => {
                     let mut args_vals = Vec::new();
                     for arg in args {
@@ -1007,17 +1074,17 @@ impl Interprete {
                     
                     self.variables.push(Rc::new(RefCell::new(nuevo_scope)));
                     
-                    for sent in &bloque {
-                        self.ejecutar_sentencia(sent)?;
-                        if self.retorno_actual.is_some() {
-                            break;
+                    for sent in bloque {
+                        if let Some(val) = self.ejecutar_sentencia(&sent.clone())? {
+                            self.variables.pop();
+                            return Ok(val);
                         }
                     }
                     
                     self.variables.pop();
-                    return Ok(self.retorno_actual.take().unwrap_or(Value::Nulo));
+                    Ok(Value::Nulo)
                 },
-                _ => {}
+                _ => Err(format!("'{}' no es una función", nombre)),
             }
         }
 
@@ -1047,9 +1114,9 @@ impl Interprete {
             self.variables.push(Rc::new(RefCell::new(nuevo_scope)));
 
         for sent in &bloque {
-            self.ejecutar_sentencia(sent)?;
-            if self.retorno_actual.is_some() {
-                break;
+            if let Some(val) = self.ejecutar_sentencia(sent)? {
+                self.variables.pop();
+                return Ok(val);
             }
         }
 
@@ -1083,7 +1150,7 @@ impl Interprete {
 
             // Buscar y ejecutar constructor (__init__)
             for (metodo_nombre, parametros, bloque) in metodos_all {
-                if metodo_nombre == "constructor" {
+                if metodo_nombre == "nuevo" {
                      // Ejecutar constructor (similar a ejecutar_metodo)
                      let mut valores_args = Vec::new();
                      for arg in args {
@@ -1095,7 +1162,7 @@ impl Interprete {
                      }
                      
                      let mut scope_metodo = HashMap::new();
-                     scope_metodo.insert("this".to_string(), instancia.clone());
+                     scope_metodo.insert("yo".to_string(), instancia.clone());
                      
                      for (i, (param, _)) in parametros.iter().enumerate() {
                          scope_metodo.insert(param.clone(), valores_args[i].clone());
@@ -1197,108 +1264,114 @@ impl Interprete {
                 }
             }
             Value::Lista(lista_rc) => {
-                let mut lista = lista_rc.borrow_mut();
                 match metodo.as_str() {
-                    "agregar" => {
-                        if args.len() != 1 { return Err("agregar espera 1 argumento".to_string()); }
-                        lista.push(args[0].clone());
-                        Ok(Value::Nulo)
-                    }
-                    "eliminar" => {
-                        if args.len() != 1 { return Err("eliminar espera 1 argumento (indice)".to_string()); }
-                        let indice = args[0].a_numero() as usize;
-                        if indice < lista.len() {
-                            Ok(lista.remove(indice))
-                        } else {
-                            Err(format!("Índice fuera de rango: {}", indice))
-                        }
-                    }
-                    "longitud" => {
-                        Ok(Value::Numero(lista.len() as f64))
-                    }
-                    "suma" => {
-                        // O(n) - suma de todos los números
-                        let sum: f64 = lista.iter()
-                            .filter_map(|v| if let Value::Numero(n) = v { Some(n) } else { None })
-                            .sum();
-                        Ok(Value::Numero(sum))
-                    }
-                    "minimo" => {
-                        // O(n) - encuentra el mínimo
-                        lista.iter()
-                            .filter_map(|v| if let Value::Numero(n) = v { Some(*n) } else { None })
-                            .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
-                            .map(Value::Numero)
-                            .ok_or("Lista vacía o sin números".to_string())
-                    }
-                    "maximo" => {
-                        // O(n) - encuentra el máximo
-                        lista.iter()
-                            .filter_map(|v| if let Value::Numero(n) = v { Some(*n) } else { None })
-                            .max_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
-                            .map(Value::Numero)
-                            .ok_or("Lista vacía o sin números".to_string())
-                    }
-                    "insertar" => {
-                        if args.len() != 2 { return Err("insertar espera 2 argumentos (indice, valor)".to_string()); }
-                        let indice = args[0].a_numero() as usize;
-                        if indice <= lista.len() {
-                            lista.insert(indice, args[1].clone());
-                            Ok(Value::Nulo)
-                        } else {
-                            Err(format!("Índice fuera de rango: {}", indice))
-                        }
-                    }
-                    "contiene" => {
-                        if args.len() != 1 { return Err("contiene espera 1 argumento".to_string()); }
-                        let buscado = &args[0];
-                        let encontrado = lista.iter().any(|v| v == buscado); // Requiere PartialEq en Value
-                        Ok(Value::Logico(encontrado))
-                    }
-                    "ordenar" => {
-                        // Ordenamiento básico (solo números o textos por ahora)
-                        lista.sort_by(|a, b| {
-                            match (a, b) {
-                                (Value::Numero(n1), Value::Numero(n2)) => n1.partial_cmp(n2).unwrap_or(std::cmp::Ordering::Equal),
-                                (Value::Texto(s1), Value::Texto(s2)) => s1.cmp(s2),
-                                _ => std::cmp::Ordering::Equal,
+                    "agregar" | "eliminar" | "insertar" | "ordenar" | "invertir" | "limpiar" => {
+                        let mut lista = lista_rc.borrow_mut();
+                        match metodo.as_str() {
+                            "agregar" => {
+                                if args.len() != 1 { return Err("agregar espera 1 argumento".to_string()); }
+                                lista.push(args[0].clone());
+                                Ok(Value::Nulo)
                             }
-                        });
-                        Ok(Value::Nulo)
-                    }
-                    "invertir" => {
-                        lista.reverse();
-                        Ok(Value::Nulo)
-                    }
-                    "limpiar" => {
-                        lista.clear();
-                        Ok(Value::Nulo)
-                    }
-                    "copiar" => {
-                        Ok(Value::Lista(Rc::new(RefCell::new(lista.clone()))))
-                    }
-                    "unir" => {
-                        if args.len() != 1 { return Err("unir espera 1 argumento (separador)".to_string()); }
-                        let sep = args[0].a_texto();
-                        let strs: Vec<String> = lista.iter().map(|v| v.a_texto()).collect();
-                        Ok(Value::Texto(strs.join(&sep)))
-                    }
-                    "sublista" => {
-                        if args.len() != 2 { return Err("sublista espera 2 argumentos (inicio, fin)".to_string()); }
-                        let inicio = args[0].a_numero() as usize;
-                        let fin = args[1].a_numero() as usize;
-                        if inicio <= fin && fin <= lista.len() {
-                            let sub = lista[inicio..fin].to_vec();
-                            Ok(Value::Lista(Rc::new(RefCell::new(sub))))
-                        } else {
-                            Err("Índices fuera de rango".to_string())
+                            "eliminar" => {
+                                if args.len() != 1 { return Err("eliminar espera 1 argumento (indice)".to_string()); }
+                                let indice = args[0].a_numero() as usize;
+                                if indice < lista.len() {
+                                    Ok(lista.remove(indice))
+                                } else {
+                                    Err(format!("Índice fuera de rango: {}", indice))
+                                }
+                            }
+                            "insertar" => {
+                                if args.len() != 2 { return Err("insertar espera 2 argumentos (indice, valor)".to_string()); }
+                                let indice = args[0].a_numero() as usize;
+                                if indice <= lista.len() {
+                                    lista.insert(indice, args[1].clone());
+                                    Ok(Value::Nulo)
+                                } else {
+                                    Err(format!("Índice fuera de rango: {}", indice))
+                                }
+                            }
+                            "ordenar" => {
+                                lista.sort_by(|a, b| {
+                                    match (a, b) {
+                                        (Value::Numero(n1), Value::Numero(n2)) => n1.partial_cmp(n2).unwrap_or(std::cmp::Ordering::Equal),
+                                        (Value::Texto(s1), Value::Texto(s2)) => s1.cmp(s2),
+                                        _ => std::cmp::Ordering::Equal,
+                                    }
+                                });
+                                Ok(Value::Nulo)
+                            }
+                            "invertir" => {
+                                lista.reverse();
+                                Ok(Value::Nulo)
+                            }
+                            "limpiar" => {
+                                lista.clear();
+                                Ok(Value::Nulo)
+                            }
+                            _ => unreachable!(),
                         }
                     }
-                    "a_texto" => {
-                        let strs: Vec<String> = lista.iter().map(|v| v.a_texto()).collect();
-                        Ok(Value::Texto(format!("[{}]", strs.join(", "))))
+                    _ => {
+                        let lista = lista_rc.borrow();
+                        match metodo.as_str() {
+                            "longitud" => {
+                                Ok(Value::Numero(lista.len() as f64))
+                            }
+                            "suma" => {
+                                let sum: f64 = lista.iter()
+                                    .filter_map(|v| if let Value::Numero(n) = v { Some(n) } else { None })
+                                    .sum();
+                                Ok(Value::Numero(sum))
+                            }
+                            "minimo" => {
+                                lista.iter()
+                                    .filter_map(|v| if let Value::Numero(n) = v { Some(*n) } else { None })
+                                    .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+                                    .map(Value::Numero)
+                                    .ok_or("Lista vacía o sin números".to_string())
+                            }
+                            "maximo" => {
+                                lista.iter()
+                                    .filter_map(|v| if let Value::Numero(n) = v { Some(*n) } else { None })
+                                    .max_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
+                                    .map(Value::Numero)
+                                    .ok_or("Lista vacía o sin números".to_string())
+                            }
+                            "contiene" => {
+                                if args.len() != 1 { return Err("contiene espera 1 argumento".to_string()); }
+                                let buscado = &args[0];
+                                let encontrado = lista.iter().any(|v| v == buscado);
+                                Ok(Value::Logico(encontrado))
+                            }
+                            "copiar" => {
+                                Ok(Value::Lista(Rc::new(RefCell::new(lista.clone()))))
+                            }
+                            "unir" => {
+                                if args.len() != 1 { return Err("unir espera 1 argumento (separador)".to_string()); }
+                                let sep = args[0].a_texto();
+                                let strs: Vec<String> = lista.iter().map(|v| v.a_texto()).collect();
+                                Ok(Value::Texto(strs.join(&sep)))
+                            }
+                            "sublista" => {
+                                if args.len() != 2 { return Err("sublista espera 2 argumentos (inicio, fin)".to_string()); }
+                                let inicio = args[0].a_numero() as usize;
+                                let fin = args[1].a_numero() as usize;
+                                if inicio <= fin && fin <= lista.len() {
+                                    let sub = lista[inicio..fin].to_vec();
+                                    Ok(Value::Lista(Rc::new(RefCell::new(sub))))
+                                } else {
+                                    Err("Índices fuera de rango".to_string())
+                                }
+                            }
+                            "a_texto" => {
+                                let strs: Vec<String> = lista.iter().map(|v| v.a_texto()).collect();
+                                Ok(Value::Texto(format!("[{}]", strs.join(", "))))
+                            }
+                            _ => Err(format!("Método '{}' no definido para Lista", metodo)),
+                        }
                     }
-                    _ => Err(format!("Método '{}' no definido para Lista", metodo)),
                 }
             }
             Value::Numero(n) => {
@@ -1323,6 +1396,12 @@ impl Interprete {
             }
             Value::Texto(s) => {
                 match metodo.as_str() {
+                    "a_numero" => {
+                        match s.parse::<f64>() {
+                            Ok(n) => Ok(Value::Numero(n)),
+                            Err(_) => Ok(Value::Nulo),
+                        }
+                    }
                     "longitud" => Ok(Value::Numero(s.chars().count() as f64)),
                     "mayusculas" => Ok(Value::Texto(s.to_uppercase())),
                     "minusculas" => Ok(Value::Texto(s.to_lowercase())),
@@ -1344,6 +1423,27 @@ impl Interprete {
                         Ok(Value::Lista(Rc::new(RefCell::new(partes))))
                     }
                     "recortar" => Ok(Value::Texto(s.trim().to_string())),
+                    "caracter_en" => {
+                        if args.len() != 1 { return Err("caracter_en espera 1 argumento (indice)".to_string()); }
+                        let idx = args[0].a_numero() as usize;
+                        if let Some(c) = s.chars().nth(idx) {
+                            Ok(Value::Texto(c.to_string()))
+                        } else {
+                            Ok(Value::Texto("".to_string())) // Retornar vacio si fuera de rango para evitar panic
+                        }
+                    }
+                    "subcadena" => {
+                        if args.len() != 2 { return Err("subcadena espera 2 argumentos (inicio, fin)".to_string()); }
+                        let inicio = args[0].a_numero() as usize;
+                        let fin = args[1].a_numero() as usize;
+                        let chars: Vec<char> = s.chars().collect();
+                        if inicio <= fin && fin <= chars.len() {
+                            let sub: String = chars[inicio..fin].iter().collect();
+                            Ok(Value::Texto(sub))
+                        } else {
+                            Ok(Value::Texto("".to_string())) // Tolerante a fallos
+                        }
+                    }
                     _ => Err(format!("Método '{}' no definido para Texto", metodo)),
                 }
             }
@@ -1473,7 +1573,7 @@ impl Interprete {
                         // Crear scope para el método
                         let mut scope_metodo = HashMap::new();
                         // 'this' apunta a la instancia
-                        scope_metodo.insert("this".to_string(), objeto.clone());
+                        scope_metodo.insert("yo".to_string(), objeto.clone());
 
                         for (i, (param, _)) in parametros.iter().enumerate() {
                             scope_metodo.insert(param.clone(), valores_args[i].clone());
@@ -1552,6 +1652,7 @@ impl Interprete {
     }
 
     fn acceder_atributo(&self, objeto: &Value, atributo: &str) -> Result<Value, String> {
+        // println!("DEBUG: Accediendo atributo '{}' en objeto de tipo {:?}", atributo, objeto);
         if let Value::Instancia { clase: _, atributos } = objeto {
             if let Some(val) = atributos.borrow().get(atributo) {
                 Ok(val.clone())

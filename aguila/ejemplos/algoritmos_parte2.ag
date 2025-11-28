@@ -1,0 +1,209 @@
+# 🦅 ALGORITMOS MAESTROS - PARTE 2
+# Estructuras de Datos y Algoritmos Avanzados
+
+# ==========================================
+# UTILIDAD: MinHeap (Montículo Mínimo)
+# ==========================================
+clase MinHeap {
+    propiedad heap: Lista
+    
+    nuevo() {
+        yo.heap = []
+    }
+    
+    longitud() {
+        retornar yo.heap.longitud()
+    }
+    
+    insertar(val) {
+        yo.heap.agregar(val)
+        yo._subir(yo.heap.longitud() - 1)
+    }
+    
+    extraer_min() {
+        si yo.heap.longitud() == 0 { retornar nulo }
+        min_val = yo.heap[0]
+        ultimo = yo.heap.pop()
+        
+        si yo.heap.longitud() > 0 {
+            yo.heap[0] = ultimo
+            yo._bajar(0)
+        }
+        retornar min_val
+    }
+    
+    _subir(idx) {
+        padre = ((idx - 1) / 2).piso()
+        mientras idx > 0 y yo.heap[padre] > yo.heap[idx] {
+            # Swap
+            temp = yo.heap[padre]
+            yo.heap[padre] = yo.heap[idx]
+            yo.heap[idx] = temp
+            
+            idx = padre
+            padre = ((idx - 1) / 2).piso()
+        }
+    }
+    
+    _bajar(idx) {
+        n = yo.heap.longitud()
+        menor = idx
+        izq = 2 * idx + 1
+        der = 2 * idx + 2
+        
+        si izq < n y yo.heap[izq] < yo.heap[menor] { menor = izq }
+        si der < n y yo.heap[der] < yo.heap[menor] { menor = der }
+        
+        si menor != idx {
+            temp = yo.heap[idx]
+            yo.heap[idx] = yo.heap[menor]
+            yo.heap[menor] = temp
+            yo._bajar(menor)
+        }
+    }
+}
+
+# ==========================================
+# 7. K Closest Points to Origin
+# ==========================================
+# Nota: Usamos distancia al cuadrado para evitar raiz cuadrada
+# Necesitamos un MaxHeap para mantener los K menores, o ordenar.
+# Aquí usaremos ordenamiento simple por ahora ya que Heap de tuplas es complejo sin genéricos.
+funcion k_puntos_cercanos(puntos, k) {
+    # Ordenar basado en x^2 + y^2
+    # Como no tenemos sort con comparador custom, implementamos quicksort custom
+    quicksort_puntos(puntos, 0, puntos.longitud() - 1)
+    
+    res = []
+    para i = 0 hasta k {
+        res.agregar(puntos[i])
+    }
+    retornar res
+}
+
+funcion dist_sq(p) {
+    retornar p[0]*p[0] + p[1]*p[1]
+}
+
+funcion quicksort_puntos(arr, bajo, alto) {
+    si bajo < alto {
+        pi = particion_puntos(arr, bajo, alto)
+        quicksort_puntos(arr, bajo, pi - 1)
+        quicksort_puntos(arr, pi + 1, alto)
+    }
+}
+
+funcion particion_puntos(arr, bajo, alto) {
+    pivote = dist_sq(arr[alto])
+    i = bajo - 1
+    para j = bajo hasta alto {
+        si dist_sq(arr[j]) < pivote {
+            i = i + 1
+            temp = arr[i]
+            arr[i] = arr[j]
+            arr[j] = temp
+        }
+    }
+    temp = arr[i + 1]
+    arr[i + 1] = arr[alto]
+    arr[alto] = temp
+    retornar i + 1
+}
+
+# ==========================================
+# 16. Top K Frequent Elements
+# ==========================================
+funcion top_k_frecuentes(nums, k) {
+    frecuencias = {}
+    para n en nums {
+        clave = n.a_texto()
+        si frecuencias.contiene(clave) {
+            frecuencias[clave] = frecuencias[clave] + 1
+        } sino {
+            frecuencias[clave] = 1
+        }
+    }
+    
+    # Convertir a lista de [num, freq]
+    items = []
+    para clave en frecuencias.claves() {
+        items.agregar([clave.a_numero(), frecuencias[clave]])
+    }
+    
+    # Ordenar por frecuencia descendente (bubble sort simple para demo)
+    n = items.longitud()
+    para i = 0 hasta n {
+        para j = 0 hasta n - i - 1 {
+            si items[j][1] < items[j+1][1] {
+                temp = items[j]
+                items[j] = items[j+1]
+                items[j+1] = temp
+            }
+        }
+    }
+    
+    res = []
+    para i = 0 hasta k {
+        res.agregar(items[i][0])
+    }
+    retornar res
+}
+
+# ==========================================
+# 13. Median of Two Sorted Arrays
+# ==========================================
+funcion mediana_arrays(nums1, nums2) {
+    # Fusionar ordenado (Merge)
+    fusion = []
+    i = 0
+    j = 0
+    n1 = nums1.longitud()
+    n2 = nums2.longitud()
+    
+    mientras i < n1 y j < n2 {
+        si nums1[i] < nums2[j] {
+            fusion.agregar(nums1[i])
+            i = i + 1
+        } sino {
+            fusion.agregar(nums2[j])
+            j = j + 1
+        }
+    }
+    
+    mientras i < n1 { 
+        fusion.agregar(nums1[i])
+        i = i + 1 
+    }
+    mientras j < n2 { 
+        fusion.agregar(nums2[j])
+        j = j + 1 
+    }
+    
+    total = fusion.longitud()
+    mid = (total / 2).piso()
+    
+    si total % 2 == 0 {
+        retornar (fusion[mid-1] + fusion[mid]) / 2
+    } sino {
+        retornar fusion[mid]
+    }
+}
+
+# ==========================================
+# PRUEBAS PARTE 2 (Arrays & Heaps)
+# ==========================================
+imprimir "--- 7. K Closest Points ---"
+puntos = [[1,3], [-2,2], [5,8], [0,1]]
+k = 2
+imprimir a"Puntos: {puntos}"
+imprimir a"2 más cercanos: {k_puntos_cercanos(puntos, k)}"
+
+imprimir "\n--- 16. Top K Frequent ---"
+nums = [1,1,1,2,2,3]
+imprimir a"Nums: {nums}"
+imprimir a"Top 2 frecuentes: {top_k_frecuentes(nums, 2)}"
+
+imprimir "\n--- 13. Median Two Arrays ---"
+a1 = [1, 3]
+a2 = [2]
+imprimir a"Mediana de {a1} y {a2}: {mediana_arrays(a1, a2)}"

@@ -317,7 +317,7 @@ impl Lexer {
                     self.avanzar();
                     Token::NoIgual
                 } else {
-                    panic!("Error léxico en línea {}: '!' inesperado", self.linea);
+                    Token::No
                 }
             }
             Some('"') => self.leer_texto('"'),
@@ -354,6 +354,7 @@ impl Lexer {
                         "caso" => Token::Caso,
                         "defecto" => Token::Defecto,
                         "romper" => Token::Romper,
+                        "continuar" => Token::Continuar,
                         "y" => Token::Y,
                         "o" => Token::O,
                         "no" => Token::No,

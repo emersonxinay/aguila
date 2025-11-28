@@ -1,0 +1,7 @@
+col = 10
+diff = 5
+tablero = [5]
+f = 0
+si tablero[f] == col - diff {
+    imprimir "Igual"
+}

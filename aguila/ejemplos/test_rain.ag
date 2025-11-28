@@ -1,0 +1,32 @@
+funcion atrapar_agua(alturas) {
+    n = alturas.longitud()
+    si n == 0 { retornar 0 }
+    
+    izq = 0
+    der = n - 1
+    max_izq = 0
+    max_der = 0
+    agua = 0
+    
+    mientras izq <= der {
+        si alturas[izq] <= alturas[der] {
+            si alturas[izq] >= max_izq {
+                max_izq = alturas[izq]
+            } sino {
+                agua = agua + (max_izq - alturas[izq])
+            }
+            izq = izq + 1
+        } sino {
+            si alturas[der] >= max_der {
+                max_der = alturas[der]
+            } sino {
+                agua = agua + (max_der - alturas[der])
+            }
+            der = der - 1
+        }
+    }
+    retornar agua
+}
+
+alturas = [0,1,0,2,1,0,1,3,2,1,2,1]
+imprimir atrapar_agua(alturas)

@@ -1,0 +1,3 @@
+lista = []
+lista.agregar(-1)
+imprimir lista[0]

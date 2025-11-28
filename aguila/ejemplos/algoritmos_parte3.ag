@@ -1,0 +1,186 @@
+# 🦅 ALGORITMOS MAESTROS - PARTE 3
+# Programación Dinámica y Grafos
+
+# ==========================================
+# 5. Longest Palindromic Substring
+# ==========================================
+funcion subcadena_palindroma_mas_larga(s) {
+    si s.longitud() < 2 { retornar s }
+    
+    inicio = 0
+    max_len = 0
+    n = s.longitud()
+    
+    para i = 0 hasta n {
+        # Palíndromos impares (centro en i)
+        l = i
+        r = i
+        mientras l >= 0 y r < n y s.caracter_en(l) == s.caracter_en(r) {
+            si (r - l + 1) > max_len {
+                inicio = l
+                max_len = r - l + 1
+            }
+            l = l - 1
+            r = r + 1
+        }
+        
+        # Palíndromos pares (centro entre i e i+1)
+        l = i
+        r = i + 1
+        mientras l >= 0 y r < n y s.caracter_en(l) == s.caracter_en(r) {
+            si (r - l + 1) > max_len {
+                inicio = l
+                max_len = r - l + 1
+            }
+            l = l - 1
+            r = r + 1
+        }
+    }
+    
+    retornar s.subcadena(inicio, inicio + max_len)
+}
+
+# ==========================================
+# 53. Maximum Subarray (Kadane's Algorithm)
+# ==========================================
+funcion subarreglo_maximo(nums) {
+    max_so_far = nums[0]
+    max_ending_here = nums[0]
+    n = nums.longitud()
+    
+    para i = 1 hasta n {
+        x = nums[i]
+        # max(x, max_ending_here + x)
+        si x > (max_ending_here + x) {
+            max_ending_here = x
+        } sino {
+            max_ending_here = max_ending_here + x
+        }
+        
+        si max_ending_here > max_so_far {
+            max_so_far = max_ending_here
+        }
+    }
+    
+    retornar max_so_far
+}
+
+# ==========================================
+# 200. Number of Islands
+# ==========================================
+funcion numero_de_islas(grid) {
+    si grid.longitud() == 0 { retornar 0 }
+    
+    filas = grid.longitud()
+    cols = grid[0].longitud()
+    count = 0
+    
+    para i = 0 hasta filas {
+        para j = 0 hasta cols {
+            si grid[i][j] == "1" {
+                count = count + 1
+                dfs_islas(grid, i, j, filas, cols)
+            }
+        }
+    }
+    
+    retornar count
+}
+
+funcion dfs_islas(grid, i, j, filas, cols) {
+    si i < 0 o j < 0 o i >= filas o j >= cols o grid[i][j] != "1" {
+        retornar nulo
+    }
+    
+    # Marcar como visitado
+    grid[i][j] = "0"
+    
+    dfs_islas(grid, i+1, j, filas, cols)
+    dfs_islas(grid, i-1, j, filas, cols)
+    dfs_islas(grid, i, j+1, filas, cols)
+    dfs_islas(grid, i, j-1, filas, cols)
+}
+
+# ==========================================
+# 207. Course Schedule (Detect Cycle in Directed Graph)
+# ==========================================
+funcion puede_terminar_cursos(num_cursos, prerequisitos) {
+    grafo = {}
+    # Inicializar grafo
+    para i = 0 hasta num_cursos {
+        clave = i.a_texto()
+        grafo[clave] = []
+    }
+    
+    para par en prerequisitos {
+        curso = par[0].a_texto()
+        pre = par[1].a_texto()
+        grafo[curso].agregar(pre)
+    }
+    
+    # 0 = no visitado, 1 = visitando, 2 = visitado
+    estado = {}
+    para i = 0 hasta num_cursos {
+        estado[i.a_texto()] = 0
+    }
+    
+    para i = 0 hasta num_cursos {
+        clave = i.a_texto()
+        si estado[clave] == 0 {
+            si detectar_ciclo(grafo, clave, estado) {
+                retornar falso
+            }
+        }
+    }
+    
+    retornar verdadero
+}
+
+funcion detectar_ciclo(grafo, curso, estado) {
+    si estado[curso] == 1 { retornar verdadero } # Ciclo detectado
+    si estado[curso] == 2 { retornar falso }     # Ya procesado
+    
+    estado[curso] = 1 # Marcando como visitando
+    
+    vecinos = grafo[curso]
+    para vecino en vecinos {
+        si detectar_ciclo(grafo, vecino, estado) {
+            retornar verdadero
+        }
+    }
+    
+    estado[curso] = 2 # Marcado como visitado
+    retornar falso
+}
+
+# ==========================================
+# PRUEBAS PARTE 3
+# ==========================================
+
+imprimir "--- 5. Longest Palindromic Substring ---"
+s = "babad"
+imprimir a"Cadena: '{s}'"
+imprimir a"Palíndromo más largo: '{subcadena_palindroma_mas_larga(s)}'"
+
+imprimir "\n--- 53. Maximum Subarray ---"
+nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+imprimir a"Nums: {nums}"
+imprimir a"Suma máxima: {subarreglo_maximo(nums)}"
+
+imprimir "\n--- 200. Number of Islands ---"
+grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+imprimir "Grid:"
+imprimir grid
+imprimir a"Número de islas: {numero_de_islas(grid)}"
+
+imprimir "\n--- 207. Course Schedule ---"
+num_cursos = 2
+prereqs1 = [[1,0]]
+prereqs2 = [[1,0], [0,1]]
+imprimir a"Cursos: {num_cursos}, Prereqs: {prereqs1} -> ¿Posible? {puede_terminar_cursos(num_cursos, prereqs1)}"
+imprimir a"Cursos: {num_cursos}, Prereqs: {prereqs2} -> ¿Posible? {puede_terminar_cursos(num_cursos, prereqs2)}"

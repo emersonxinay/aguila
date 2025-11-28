@@ -1,8 +1,8 @@
-# 🦅 Águila v2.3.0
+# 🦅 Águila v2.4.0
 
 **Lenguaje de programación en español con velocidad de Rust**
 
-[![NPM Version](https://img.shields.io/npm/v/aguila-lang)](https://www.npmjs.com/package/aguila-lang)
+[![NPM Version](https://img.shields.io/npm/v/aguila)](https://www.npmjs.com/package/aguila)
 [![VS Code Extension](https://img.shields.io/visual-studio-marketplace/v/aguila-lang.aguila-vscode)](https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -12,7 +12,7 @@
 
 ```bash
 # NPM (Recomendado)
-npm install -g aguila-lang
+npm install -g aguila
 
 # Verificar instalación
 aguila --version
@@ -20,34 +20,35 @@ aguila --version
 
 ---
 
-## ✨ Novedades v2.3.0
+## ✨ Novedades v2.4.0
 
-### 1️⃣ Asignación a Índices
+### 1️⃣ Algoritmos Avanzados y Recursión
+Soporte robusto para algoritmos complejos como Backtracking, Árboles y Grafos gracias a mejoras críticas en el runtime.
 ```aguila
-lista = [1, 2, 3, 4, 5]
-lista[0] = 100
-lista[4] = 500
-# [100, 2, 3, 4, 500]
-```
-
-### 2️⃣ Palabra Clave `romper`
-```aguila
-mientras verdadero {
-    x = leer("Número: ")
-    si x == secreto {
-        imprimir "¡Ganaste!"
-        romper
-    }
+funcion factorial(n) {
+    si n <= 1 { retornar 1 }
+    retornar n * factorial(n - 1)
 }
 ```
 
-### 3️⃣ Métodos Optimizados
+### 2️⃣ Asignación a Índices
+Ahora puedes modificar listas y diccionarios directamente por índice/clave.
 ```aguila
-numeros = [5, 2, 8, 1, 9, 3]
-imprimir numeros.suma()     # 28
-imprimir numeros.minimo()   # 1
-imprimir numeros.maximo()   # 9
+lista = [1, 2, 3]
+lista[0] = 100
+# [100, 2, 3]
 ```
+
+### 3️⃣ Palabra Clave `romper`
+Control de flujo mejorado para bucles.
+```aguila
+mientras verdadero {
+    si condicion { romper }
+}
+```
+
+### 4️⃣ Métodos Nativos Optimizados
+Nuevos métodos para Listas y Números: `.suma()`, `.minimo()`, `.maximo()`, `.abs()`, `.redondear()`.
 
 ---
 

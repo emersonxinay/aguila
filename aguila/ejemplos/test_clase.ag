@@ -1,0 +1,10 @@
+clase Prueba {
+    propiedad x: Numero
+    nuevo() {
+        imprimir "Constructor ejecutado"
+        yo.x = 10
+    }
+}
+
+p = nuevo Prueba()
+imprimir p.x

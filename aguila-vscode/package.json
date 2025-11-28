@@ -1,8 +1,8 @@
 {
     "name": "aguila-vscode",
-    "displayName": "Aguila Language",
-    "description": "Soporte para el lenguaje de programación Aguila",
-    "version": "0.3.0",
+    "displayName": "Águila Language",
+    "description": "Soporte para el lenguaje de programación Águila",
+    "version": "0.4.0",
     "publisher": "aguila-lang",
     "engines": {
         "vscode": "^1.70.0"
@@ -15,6 +15,31 @@
         "Programming Languages"
     ],
     "icon": "icon.png",
+    "main": "./out/extension.js",
+    "activationEvents": [
+        "onLanguage:aguila"
+    ],
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.70.0",
+        "@types/glob": "^7.2.0",
+        "@types/mocha": "^9.1.1",
+        "@types/node": "16.x",
+        "@typescript-eslint/eslint-plugin": "^5.31.0",
+        "@typescript-eslint/parser": "^5.31.0",
+        "eslint": "^8.20.0",
+        "glob": "^8.0.3",
+        "mocha": "^10.0.0",
+        "typescript": "^4.7.4",
+        "@vscode/test-electron": "^2.1.5"
+    },
     "contributes": {
         "languages": [
             {

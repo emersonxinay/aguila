@@ -1,0 +1,35 @@
+funcion distancia_edicion(palabra1, palabra2) {
+    p1 = palabra1.dividir("")
+    p2 = palabra2.dividir("")
+    
+    m = p1.longitud()
+    n = p2.longitud()
+    dp = []
+    
+    para i = 0 hasta m + 1 {
+        fila = []
+        para j = 0 hasta n + 1 { fila.agregar(0) }
+        dp.agregar(fila)
+    }
+    
+    para i = 0 hasta m + 1 { dp[i][0] = i }
+    para j = 0 hasta n + 1 { dp[0][j] = j }
+    
+    para i = 1 hasta m + 1 {
+        para j = 1 hasta n + 1 {
+            costo = 1
+            si p1[i-1] == p2[j-1] { costo = 0 }
+            
+            min_val = dp[i-1][j] + 1
+            si dp[i][j-1] + 1 < min_val { min_val = dp[i][j-1] + 1 }
+            si dp[i-1][j-1] + costo < min_val { min_val = dp[i-1][j-1] + costo }
+            
+            dp[i][j] = min_val
+        }
+    }
+    retornar dp[m][n]
+}
+
+p1 = "horse"
+p2 = "ros"
+imprimir distancia_edicion(p1, p2)
