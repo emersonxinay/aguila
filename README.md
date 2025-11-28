@@ -98,7 +98,6 @@ imprimir usuario.obtener("nombre")
 ---
 
 imprimir usuario.obtener("nombre")
-```
 
 ---
 
