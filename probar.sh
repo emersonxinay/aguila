@@ -43,8 +43,12 @@ run_script() {
 }
 
 run_script "ejemplos/hola.ag"
-run_script "ejemplos/hola.ag"
 run_script "ejemplos/algoritmos_avanzados.ag"
+run_script "ejemplos/sanity.ag"
+
+echo -e "\n🚀 Ejecutando Benchmark JIT (fib30)..."
+time $BIN "ejemplos/fib30.ag"
+
 
 # 4. Pruebas de Compatibilidad (Regresión)
 echo -e "\n🏛️  Ejecutando pruebas de compatibilidad (v2.x)..."

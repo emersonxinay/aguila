@@ -1,0 +1,12 @@
+funcion fib(n) {
+    si n < 2 {
+        retornar n
+    }
+    r1 = fib(n - 1)
+    r2 = fib(n - 2)
+    retornar r1 + r2
+}
+
+imprimir 111
+imprimir fib(5)
+imprimir 999

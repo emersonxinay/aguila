@@ -1,0 +1,14 @@
+funcion fib(n) {
+    si n <= 1 {
+        retornar n
+    }
+    retornar fib(n - 1) + fib(n - 2)
+}
+
+inicio = fecha.ahora()
+resultado = fib(28)
+fin = fecha.ahora()
+
+tiempo_segundos = (fin - inicio) / 1000
+imprimir a"Águila: Fib(35) = {resultado}"
+imprimir a"Tiempo: {tiempo_segundos} segundos"

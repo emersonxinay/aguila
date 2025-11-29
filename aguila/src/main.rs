@@ -5,11 +5,13 @@ mod types;
 mod interpreter;
 mod cli;
 mod compiler;
+mod compiler_bytecode;
 mod analyzer;
 mod repl;
+mod vm;
 
 use std::env;
-use cli::{cli_ejecutar, cli_chequear, cli_compilar, cli_dev};
+use cli::{cli_ejecutar, cli_chequear, cli_compilar, cli_dev, cli_vm};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -31,6 +33,17 @@ fn main() {
             }
             let archivo = &args[2];
             if let Err(e) = cli_ejecutar(archivo) {
+                eprintln!("Error: {}", e);
+                std::process::exit(1);
+            }
+        },
+        "vm" => {
+            if args.len() < 3 {
+                eprintln!("Uso: aguila vm <archivo.ag>");
+                return;
+            }
+            let archivo = &args[2];
+            if let Err(e) = cli_vm(archivo) {
                 eprintln!("Error: {}", e);
                 std::process::exit(1);
             }

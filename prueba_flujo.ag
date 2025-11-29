@@ -1,0 +1,6 @@
+x = 0
+mientras x < 5 {
+    imprimir x
+    x = x + 1
+}
+imprimir 999

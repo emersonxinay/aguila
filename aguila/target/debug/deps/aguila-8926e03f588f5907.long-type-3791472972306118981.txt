@@ -1,1 +1,0 @@
-(Vec<(std::string::String, Option<std::string::String>)>, Option<std::string::String>, Vec<Sentencia>)

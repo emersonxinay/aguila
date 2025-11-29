@@ -16,8 +16,15 @@ pub struct GeneradorJS {
 
 impl GeneradorJS {
     pub fn nuevo() -> Self {
+        let preambulo = "
+const fecha = {
+    ahora: () => Date.now(),
+    formato: (ts, fmt) => new Date(ts).toISOString() // Simplificado para MVP
+};
+const imprimir = console.log;
+";
         GeneradorJS {
-            codigo: String::from("\"use strict\";\n"),
+            codigo: String::from("\"use strict\";\n") + preambulo,
             scopes: vec![(HashSet::new(), TipoScope::Global)],
             exportaciones: Vec::new(),
         }
@@ -315,9 +322,11 @@ impl GeneradorJS {
                 self.codigo.push(')');
             }
             Expresion::BinOp { izq, op, der } => {
+                self.codigo.push('(');
                 self.generar_expresion(*izq);
                 self.codigo.push_str(&format!(" {} ", op));
                 self.generar_expresion(*der);
+                self.codigo.push(')');
             }
             Expresion::Llamada { nombre, args } => {
                 self.codigo.push_str(&nombre);
