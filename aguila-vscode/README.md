@@ -119,4 +119,4 @@ Escribe el prefijo y presiona Tab para expandir:
 
 ## 📝 Licencia
 
-MIT © 2025 Emerson Espinoza
+MIT © 2025  [Emerson Espinoza](https://github.com/emersonxinay)

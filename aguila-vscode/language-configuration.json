@@ -75,19 +75,19 @@
     },
     "wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\ <\\>\\/\\?\\s]+)",
     "indentationRules": {
-        "increaseIndentPattern": "^((?!\\/\\/).)*(\\{[^}\"'`]*|\\([^)\"'`]*|\\[[^\\]\"'`]*)$",
-        "decreaseIndentPattern": "^((?!.*?\\/\\*).*\\*/)?\\s*[\\)\\}\\]].*$"
+        "increaseIndentPattern": "^.*(\\{[^}\"'`]*|\\([^)\"'`]*|\\[[^\\]\"'`]*)\\s*(#.*)?$",
+        "decreaseIndentPattern": "^\\s*[\\)\\}\\]].*$"
     },
     "onEnterRules": [
         {
-            "beforeText": "^\\s*#.*$",
+            "beforeText": "^\\s*#",
             "action": {
                 "indent": "none",
                 "appendText": "# "
             }
         },
         {
-            "beforeText": "\\{\\s*$",
+            "beforeText": "^\\s*\\{",
             "afterText": "^\\s*\\}",
             "action": {
                 "indent": "indentOutdent"
