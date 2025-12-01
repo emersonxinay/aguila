@@ -32,7 +32,7 @@
             "patterns": [
                 {
                     "name": "keyword.control.aguila",
-                    "match": "\\b(si|sino|mientras|para|funcion|retornar|romper|continuar|clase|nuevo|este|super|nulo|verdadero|falso|y|o|no|importar|desde|como|intentar|capturar|finalmente|lanzar|global|nolocal|pasar|eliminar|con|asincrono|esperar|ceder|segun|caso|defecto|imprime|imprimir|afirmar|let)\\b"
+                    "match": "\\b(si|sino|mientras|para|en|funcion|retornar|romper|continuar|clase|nuevo|nulo|verdadero|falso|y|o|no|importar|desde|como|intentar|capturar|finalmente|lanzar|global|nolocal|pasar|eliminar|con|asincrono|esperar|ceder|segun|caso|defecto|imprime|imprimir|afirmar|let)\\b"
                 },
                 {
                     "name": "keyword.operator.logical.aguila",

@@ -362,7 +362,7 @@ impl Lexer {
             Some(car) if car.is_numeric() => self.leer_numero(),
             Some(car) if car.is_alphabetic() || car == '_' => {
                 let ident = self.leer_identificador();
-                if ident == "f"
+                if ident == "a"
                     && (self.car_actual() == Some('"') || self.car_actual() == Some('\''))
                 {
                     let delim = self.car_actual().unwrap();

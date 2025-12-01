@@ -36,7 +36,7 @@ es_rapido = verdadero
 
 ### Tipos de Datos
 *   **Numero**: `10`, `3.14`, `-5`
-*   **Texto**: `"Hola"`, `'Mundo'`
+*   **Texto**: `"Hola"`, `'Mundo'`, `a"Hola {nombre}"`
 *   **Logico**: `verdadero`, `falso`
 *   **Nulo**: `nulo`
 
