@@ -95,7 +95,7 @@ impl Lexer {
                 break;
             }
         }
-        
+
         // Parsear el número acumulado
         if let Ok(num) = numero.parse::<f64>() {
             Token::Numero(num)
@@ -193,7 +193,7 @@ impl Lexer {
                 self.omitir_resto_linea();
                 continue;
             }
-            
+
             // Verificación anticipada de // para comentarios ELIMINADA para soportar división entera
             // if self.car_actual() == Some('/') && self.car_siguiente() == Some('/') {
             //     self.omitir_resto_linea();
@@ -322,44 +322,51 @@ impl Lexer {
             }
             Some('"') => self.leer_texto('"'),
             Some('\'') => self.leer_texto('\''),
-            Some(car) if car.is_numeric() => self.leer_numero(),
-            Some(car) if car.is_alphabetic() || car == '_' => {
-                let ident = self.leer_identificador();
-                if ident == "a" && self.car_actual() == Some('"') {
-                    self.avanzar(); // Consumir "
+            Some('$') => {
+                self.avanzar();
+                // Check if it's string interpolation $"..."
+                if self.car_actual() == Some('"') {
                     let texto = self.leer_texto_interpolado('"');
                     Token::TextoInterpolado(texto)
                 } else {
-                    match ident.as_str() {
-                        "funcion" => Token::Funcion,
-                        "si" => Token::Si,
-                        "sino" => Token::Sino,
-                        "mientras" => Token::Mientras,
-                        "para" => Token::Para,
-                        "en" => Token::En,
-                        "hasta" => Token::Hasta,
-                        "clase" => Token::Clase,
-                        "imprimir" => Token::Imprimir,
-                        "verdadero" => Token::Verdadero,
-                        "falso" => Token::Falso,
-                        "nulo" => Token::Nulo,
-                        "importar" => Token::Importar,
-                        "retornar" => Token::Retornar,
-                        "intentar" => Token::Intentar,
-                        "capturar" => Token::Capturar,
-                        "nuevo" => Token::Nuevo,
-                        "asincrono" => Token::Asincrono,
-                        "esperar" => Token::Esperar,
-                        "segun" => Token::Segun,
-                        "caso" => Token::Caso,
-                        "defecto" => Token::Defecto,
-                        "romper" => Token::Romper,
-                        "continuar" => Token::Continuar,
-                        "y" => Token::Y,
-                        "o" => Token::O,
-                        "no" => Token::No,
-                        _ => Token::Identificador(ident),
-                    }
+                    panic!(
+                        "Error léxico en línea {}, columna {}: '$' inesperado (esperaba interpolación de texto)",
+                        self.linea, self.columna
+                    );
+                }
+            }
+            Some(car) if car.is_numeric() => self.leer_numero(),
+            Some(car) if car.is_alphabetic() || car == '_' => {
+                let ident = self.leer_identificador();
+                match ident.as_str() {
+                    "funcion" => Token::Funcion,
+                    "si" => Token::Si,
+                    "sino" => Token::Sino,
+                    "mientras" => Token::Mientras,
+                    "para" => Token::Para,
+                    "en" => Token::En,
+                    "hasta" => Token::Hasta,
+                    "clase" => Token::Clase,
+                    "imprimir" => Token::Imprimir,
+                    "verdadero" => Token::Verdadero,
+                    "falso" => Token::Falso,
+                    "nulo" => Token::Nulo,
+                    "importar" => Token::Importar,
+                    "retornar" => Token::Retornar,
+                    "intentar" => Token::Intentar,
+                    "capturar" => Token::Capturar,
+                    "nuevo" => Token::Nuevo,
+                    "asincrono" => Token::Asincrono,
+                    "esperar" => Token::Esperar,
+                    "segun" => Token::Segun,
+                    "caso" => Token::Caso,
+                    "defecto" => Token::Defecto,
+                    "romper" => Token::Romper,
+                    "continuar" => Token::Continuar,
+                    "y" => Token::Y,
+                    "o" => Token::O,
+                    "no" => Token::No,
+                    _ => Token::Identificador(ident),
                 }
             }
             Some(car) => {

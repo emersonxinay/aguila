@@ -1,11 +1,11 @@
-use rustyline::error::ReadlineError;
-use rustyline::DefaultEditor;
+use crate::ast::Sentencia;
+use crate::interpreter::Interprete;
 use crate::lexer::Lexer;
 use crate::parser::Parser;
-use crate::interpreter::Interprete;
-use crate::ast::{Sentencia, Expresion};
+use rustyline::error::ReadlineError;
+use rustyline::DefaultEditor;
 
-pub fn iniciar() {
+pub async fn iniciar() {
     println!("🦅 ÁGUILA v{}", env!("CARGO_PKG_VERSION"));
     println!("Escribe 'salir' para terminar, o 'ayuda' para ver comandos.");
 
@@ -31,7 +31,7 @@ pub fn iniciar() {
         match readline {
             Ok(linea) => {
                 let linea_trimmed = linea.trim();
-                
+
                 // Comandos especiales solo funcionan cuando no hay buffer
                 if buffer_multilinea.is_empty() {
                     match linea_trimmed {
@@ -69,7 +69,7 @@ pub fn iniciar() {
 
                 // Verificar si el bloque está completo
                 if es_bloque_completo(&buffer_multilinea) {
-                    ejecutar_linea(&mut interprete, &buffer_multilinea);
+                    ejecutar_linea(&mut interprete, &buffer_multilinea).await;
                     buffer_multilinea.clear();
                 }
             }
@@ -141,7 +141,7 @@ fn mostrar_ayuda() {
     println!("╚═══════════════════════════════════════════╝");
 }
 
-fn ejecutar_linea(interprete: &mut Interprete, codigo: &str) {
+async fn ejecutar_linea(interprete: &mut Interprete, codigo: &str) {
     let mut lexer = Lexer::nuevo(codigo);
     let tokens = lexer.tokenizar();
 
@@ -163,8 +163,8 @@ fn ejecutar_linea(interprete: &mut Interprete, codigo: &str) {
 
             // Ejecutar el resto del programa (o todo si no había expresión al final)
             if !programa.sentencias.is_empty() {
-                match interprete.ejecutar(programa) {
-                    Ok(_) => {}, // Ignoramos el retorno normal de sentencias
+                match interprete.ejecutar(programa).await {
+                    Ok(_) => {} // Ignoramos el retorno normal de sentencias
                     Err(e) => {
                         eprintln!("❌ Error: {}", e);
                         return;
@@ -174,7 +174,7 @@ fn ejecutar_linea(interprete: &mut Interprete, codigo: &str) {
 
             // Evaluar e imprimir la última expresión si existe
             if let Some(expr) = ultima_expresion {
-                match interprete.evaluar_expresion(&expr) {
+                match interprete.evaluar_expresion(&expr).await {
                     Ok(val) => {
                         // Solo imprimir si no es Nulo (opcional, pero común en REPLs)
                         // Para 4+7 queremos ver el resultado.

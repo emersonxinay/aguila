@@ -47,6 +47,7 @@ pub enum Token {
     Punto,
     DosPuntos,
     Coma,
+    #[allow(dead_code)]
     Dos,
     Flecha,
     Modulo,

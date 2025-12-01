@@ -1,5 +1,4 @@
 use std::fmt;
-use std::ops::{Add, Sub, Mul, Div, Neg};
 
 // NaN-Boxing en 64 bits (IEEE 754)
 //
@@ -17,6 +16,7 @@ use std::ops::{Add, Sub, Mul, Div, Neg};
 // - Obj (Ptr):    QNaN | 0x8000000000000000 | Puntero (48 bits)
 
 pub const QNAN: u64 = 0x7ffc000000000000;
+#[allow(dead_code)]
 pub const SIGN_BIT: u64 = 0x8000000000000000;
 
 pub const TAG_NULO: u64 = 1;

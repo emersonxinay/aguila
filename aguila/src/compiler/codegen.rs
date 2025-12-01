@@ -1,5 +1,5 @@
+use crate::ast::{Expresion, Programa, Sentencia};
 use std::collections::HashSet;
-use crate::ast::{Programa, Sentencia, Expresion};
 
 #[derive(PartialEq)]
 enum TipoScope {
@@ -76,7 +76,7 @@ const imprimir = console.log;
                 // Si la encontramos, verificamos si cruzamos una barrera de función
                 // Si estamos en el mismo contexto de función (o global), la reutilizamos.
                 // Si la variable viene de una función superior o global, y estamos en una función, la sombreamos (Python-like).
-                return false; 
+                return false;
             }
             // Si encontramos un límite de función y no hemos encontrado la variable,
             // entonces cualquier variable encontrada más arriba será "externa",
@@ -92,16 +92,18 @@ const imprimir = console.log;
     fn generar_sentencia(&mut self, sentencia: Sentencia) {
         match sentencia {
             Sentencia::Importar { ruta, alias } => {
-                let ruta_js = ruta.replace(".ag", ".js");
+                let ruta_js = ruta.replace(".agl", ".js");
                 if let Some(nombre) = alias {
-                    self.codigo.push_str(&format!("const {} = require(\"{}\");\n", nombre, ruta_js));
+                    self.codigo
+                        .push_str(&format!("const {} = require(\"{}\");\n", nombre, ruta_js));
                     // No exportamos lo importado por defecto, pero sí lo registramos en el scope actual
-                    self.declarar_variable(nombre); 
-                    // Nota: declarar_variable lo agregará a exportaciones si es global. 
-                    // Tal vez no queremos re-exportar importaciones? 
+                    self.declarar_variable(nombre);
+                    // Nota: declarar_variable lo agregará a exportaciones si es global.
+                    // Tal vez no queremos re-exportar importaciones?
                     // Por simplicidad en MVP, dejemos que se re-exporte si es global.
                 } else {
-                    self.codigo.push_str(&format!("require(\"{}\");\n", ruta_js));
+                    self.codigo
+                        .push_str(&format!("require(\"{}\");\n", ruta_js));
                 }
             }
             Sentencia::Imprimir(expr) => {
@@ -119,15 +121,21 @@ const imprimir = console.log;
                 self.generar_expresion(valor);
                 self.codigo.push_str(";\n");
             }
-            Sentencia::Funcion { nombre, parametros, bloque, es_asincrona, .. } => {
+            Sentencia::Funcion {
+                nombre,
+                parametros,
+                bloque,
+                es_asincrona,
+                ..
+            } => {
                 self.declarar_variable(nombre.clone());
                 if es_asincrona {
                     self.codigo.push_str("async ");
                 }
                 self.codigo.push_str(&format!("function {}(", nombre));
-                
+
                 self.entrar_scope(TipoScope::Funcion);
-                
+
                 for (i, (param, _)) in parametros.iter().enumerate() {
                     if i > 0 {
                         self.codigo.push_str(", ");
@@ -135,17 +143,22 @@ const imprimir = console.log;
                     self.codigo.push_str(param);
                     self.declarar_variable(param.clone());
                 }
-                
+
                 self.codigo.push_str(") {\n");
-                
+
                 for sent in bloque {
                     self.generar_sentencia(sent);
                 }
-                
+
                 self.salir_scope();
                 self.codigo.push_str("}\n");
             }
-            Sentencia::Clase { nombre, padre, metodos, .. } => {
+            Sentencia::Clase {
+                nombre,
+                padre,
+                metodos,
+                ..
+            } => {
                 self.declarar_variable(nombre.clone());
                 self.codigo.push_str(&format!("class {}", nombre));
                 if let Some(p) = padre {
@@ -157,14 +170,15 @@ const imprimir = console.log;
 
                 for (metodo_nombre, params, cuerpo) in metodos {
                     // Traducir "inicializar" a "constructor"
-                    let nombre_js = if metodo_nombre == "inicializar" || metodo_nombre == "constructor" {
-                        "constructor".to_string()
-                    } else {
-                        metodo_nombre
-                    };
+                    let nombre_js =
+                        if metodo_nombre == "inicializar" || metodo_nombre == "constructor" {
+                            "constructor".to_string()
+                        } else {
+                            metodo_nombre
+                        };
 
                     self.codigo.push_str(&format!("    {}(", nombre_js));
-                    
+
                     self.entrar_scope(TipoScope::Funcion);
                     for (i, (param, _)) in params.iter().enumerate() {
                         if i > 0 {
@@ -178,7 +192,7 @@ const imprimir = console.log;
                     for sent in cuerpo {
                         self.generar_sentencia(sent);
                     }
-                    
+
                     self.salir_scope(); // Salir de metodo
                     self.codigo.push_str("    }\n");
                 }
@@ -198,19 +212,23 @@ const imprimir = console.log;
                 self.generar_expresion(expr);
                 self.codigo.push_str(";\n");
             }
-            Sentencia::Si { condicion, si_bloque, sino_bloque } => {
+            Sentencia::Si {
+                condicion,
+                si_bloque,
+                sino_bloque,
+            } => {
                 self.codigo.push_str("if (");
                 self.generar_expresion(condicion);
                 self.codigo.push_str(") {\n");
-                
+
                 self.entrar_scope(TipoScope::Bloque);
                 for sent in si_bloque {
                     self.generar_sentencia(sent);
                 }
                 self.salir_scope();
-                
+
                 self.codigo.push_str("}");
-                
+
                 if let Some(bloque) = sino_bloque {
                     self.codigo.push_str(" else {\n");
                     self.entrar_scope(TipoScope::Bloque);
@@ -226,13 +244,13 @@ const imprimir = console.log;
                 self.codigo.push_str("while (");
                 self.generar_expresion(condicion);
                 self.codigo.push_str(") {\n");
-                
+
                 self.entrar_scope(TipoScope::Bloque);
                 for sent in bloque {
                     self.generar_sentencia(sent);
                 }
                 self.salir_scope();
-                
+
                 self.codigo.push_str("}\n");
             }
             _ => {
@@ -289,7 +307,11 @@ const imprimir = console.log;
                 self.codigo.push('.');
                 self.codigo.push_str(&atributo);
             }
-            Expresion::MetodoLlamada { objeto, metodo, args } => {
+            Expresion::MetodoLlamada {
+                objeto,
+                metodo,
+                args,
+            } => {
                 self.generar_expresion(*objeto);
                 self.codigo.push('.');
                 self.codigo.push_str(&metodo);
@@ -302,7 +324,11 @@ const imprimir = console.log;
                 }
                 self.codigo.push(')');
             }
-            Expresion::AsignacionAtributo { objeto, atributo, valor } => {
+            Expresion::AsignacionAtributo {
+                objeto,
+                atributo,
+                valor,
+            } => {
                 self.generar_expresion(*objeto);
                 self.codigo.push('.');
                 self.codigo.push_str(&atributo);
@@ -358,7 +384,11 @@ const imprimir = console.log;
                 self.generar_expresion(*expr);
                 self.codigo.push(')');
             }
-            Expresion::FuncionAnonima { parametros, bloque, es_asincrona } => {
+            Expresion::FuncionAnonima {
+                parametros,
+                bloque,
+                es_asincrona,
+            } => {
                 if es_asincrona {
                     self.codigo.push_str("async ");
                 }
@@ -370,7 +400,7 @@ const imprimir = console.log;
                     self.codigo.push_str(param);
                 }
                 self.codigo.push_str(") {\n");
-                
+
                 self.entrar_scope(TipoScope::Funcion);
                 // Registrar parámetros en el scope
                 for param in &parametros {
@@ -380,7 +410,7 @@ const imprimir = console.log;
                 for sent in bloque {
                     self.generar_sentencia(sent);
                 }
-                
+
                 self.salir_scope();
                 self.codigo.push_str("}");
             }

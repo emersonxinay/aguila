@@ -1,4 +1,4 @@
-use crate::ast::{Programa, Sentencia, Expresion};
+use crate::ast::{Expresion, Programa, Sentencia};
 use std::collections::{HashMap, HashSet};
 
 pub struct Analizador {
@@ -48,7 +48,11 @@ impl Analizador {
 
     fn analizar_sentencia(&mut self, sentencia: &Sentencia) {
         match sentencia {
-            Sentencia::Asignacion { nombre, valor, tipo } => {
+            Sentencia::Asignacion {
+                nombre,
+                valor,
+                tipo,
+            } => {
                 self.analizar_expresion(valor);
                 self.declarar_variable(nombre.clone());
 
@@ -67,10 +71,15 @@ impl Analizador {
                     }
                 }
             }
-            Sentencia::Funcion { nombre, parametros, bloque, .. } => {
+            Sentencia::Funcion {
+                nombre,
+                parametros,
+                bloque,
+                ..
+            } => {
                 self.declarar_variable(nombre.clone());
                 self.funciones.insert(nombre.clone(), parametros.len());
-                
+
                 self.entrar_scope();
                 for (param, _) in parametros {
                     self.declarar_variable(param.clone());
@@ -80,14 +89,18 @@ impl Analizador {
                 }
                 self.salir_scope();
             }
-            Sentencia::Si { condicion, si_bloque, sino_bloque } => {
+            Sentencia::Si {
+                condicion,
+                si_bloque,
+                sino_bloque,
+            } => {
                 self.analizar_expresion(condicion);
                 self.entrar_scope();
                 for sent in si_bloque {
                     self.analizar_sentencia(sent);
                 }
                 self.salir_scope();
-                
+
                 if let Some(bloque) = sino_bloque {
                     self.entrar_scope();
                     for sent in bloque {
@@ -123,17 +136,21 @@ impl Analizador {
         match expr {
             Expresion::Identificador(nombre) => {
                 if !self.variable_definida(nombre) {
-                    self.errores.push(format!("Error: Variable '{}' no definida", nombre));
+                    self.errores
+                        .push(format!("Error: Variable '{}' no definida", nombre));
                 }
             }
             Expresion::Llamada { nombre, args } => {
                 if !self.variable_definida(nombre) {
-                     self.errores.push(format!("Error: Función '{}' no definida", nombre));
+                    self.errores
+                        .push(format!("Error: Función '{}' no definida", nombre));
                 } else if let Some(&aridad) = self.funciones.get(nombre) {
                     if args.len() != aridad {
                         self.errores.push(format!(
                             "Error: Función '{}' espera {} argumentos, pero se recibieron {}",
-                            nombre, aridad, args.len()
+                            nombre,
+                            aridad,
+                            args.len()
                         ));
                     }
                 }

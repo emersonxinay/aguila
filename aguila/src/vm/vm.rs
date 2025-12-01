@@ -1,6 +1,6 @@
 use crate::vm::chunk::{Chunk, OpCode};
-use crate::vm::value::{Value, QNAN, TAG_NULO, TAG_FALSE, TAG_TRUE};
 use crate::vm::jit::Jit;
+use crate::vm::value::{Value, QNAN, TAG_FALSE, TAG_NULO};
 
 const MAX_FRAMES: usize = 2048;
 const MAX_REGISTERS: usize = 4096; // Aumentamos registros para soportar recursión profunda
@@ -30,9 +30,13 @@ impl VM {
         // Rust requiere inicialización.
         // Hack: Usar MaybeUninit es lo más rápido, pero unsafe.
         // Por seguridad en este paso, usaremos un valor por defecto.
-        
-        let dummy_frame = CallFrame { pc: 0, base_pointer: 0, return_reg: 0 };
-        
+
+        let dummy_frame = CallFrame {
+            pc: 0,
+            base_pointer: 0,
+            return_reg: 0,
+        };
+
         Self {
             registers: [Value::nulo(); MAX_REGISTERS],
             frames: [dummy_frame; MAX_FRAMES],
@@ -48,7 +52,7 @@ impl VM {
         let mut pc = 0;
         let mut bp = 0;
         let mut frame_count = 0;
-        
+
         // Punteros crudos para acceso directo
         let regs_ptr = self.registers.as_mut_ptr();
         let frames_ptr = self.frames.as_mut_ptr();
@@ -91,8 +95,8 @@ impl VM {
                         let val_c = *regs_ptr.add(bp + c);
                         // Inlining de suma numérica para evitar llamadas a Value::numero
                         if (val_b.0 & QNAN) != QNAN && (val_c.0 & QNAN) != QNAN {
-                             let res = f64::from_bits(val_b.0) + f64::from_bits(val_c.0);
-                             *regs_ptr.add(bp + a) = Value::numero(res);
+                            let res = f64::from_bits(val_b.0) + f64::from_bits(val_c.0);
+                            *regs_ptr.add(bp + a) = Value::numero(res);
                         } else {
                             return Err("Operandos deben ser números".to_string());
                         }
@@ -101,8 +105,8 @@ impl VM {
                         let val_b = *regs_ptr.add(bp + b);
                         let val_c = *regs_ptr.add(bp + c);
                         if (val_b.0 & QNAN) != QNAN && (val_c.0 & QNAN) != QNAN {
-                             let res = f64::from_bits(val_b.0) - f64::from_bits(val_c.0);
-                             *regs_ptr.add(bp + a) = Value::numero(res);
+                            let res = f64::from_bits(val_b.0) - f64::from_bits(val_c.0);
+                            *regs_ptr.add(bp + a) = Value::numero(res);
                         } else {
                             return Err("Operandos deben ser números".to_string());
                         }
@@ -111,8 +115,8 @@ impl VM {
                         let val_b = *regs_ptr.add(bp + b);
                         let val_c = *regs_ptr.add(bp + c);
                         if (val_b.0 & QNAN) != QNAN && (val_c.0 & QNAN) != QNAN {
-                             let res = f64::from_bits(val_b.0) * f64::from_bits(val_c.0);
-                             *regs_ptr.add(bp + a) = Value::numero(res);
+                            let res = f64::from_bits(val_b.0) * f64::from_bits(val_c.0);
+                            *regs_ptr.add(bp + a) = Value::numero(res);
                         } else {
                             return Err("Operandos deben ser números".to_string());
                         }
@@ -121,28 +125,8 @@ impl VM {
                         let val_b = *regs_ptr.add(bp + b);
                         let val_c = *regs_ptr.add(bp + c);
                         if (val_b.0 & QNAN) != QNAN && (val_c.0 & QNAN) != QNAN {
-                             let res = f64::from_bits(val_b.0) / f64::from_bits(val_c.0);
-                             *regs_ptr.add(bp + a) = Value::numero(res);
-                        } else {
-                            return Err("Operandos deben ser números".to_string());
-                        }
-                    }
-                    OpCode::Multiplicar => {
-                        let val_b = *regs_ptr.add(bp + b);
-                        let val_c = *regs_ptr.add(bp + c);
-                        if (val_b.0 & QNAN) != QNAN && (val_c.0 & QNAN) != QNAN {
-                             let res = f64::from_bits(val_b.0) * f64::from_bits(val_c.0);
-                             *regs_ptr.add(bp + a) = Value::numero(res);
-                        } else {
-                            return Err("Operandos deben ser números".to_string());
-                        }
-                    }
-                    OpCode::Dividir => {
-                        let val_b = *regs_ptr.add(bp + b);
-                        let val_c = *regs_ptr.add(bp + c);
-                        if (val_b.0 & QNAN) != QNAN && (val_c.0 & QNAN) != QNAN {
-                             let res = f64::from_bits(val_b.0) / f64::from_bits(val_c.0);
-                             *regs_ptr.add(bp + a) = Value::numero(res);
+                            let res = f64::from_bits(val_b.0) / f64::from_bits(val_c.0);
+                            *regs_ptr.add(bp + a) = Value::numero(res);
                         } else {
                             return Err("Operandos deben ser números".to_string());
                         }
@@ -156,15 +140,15 @@ impl VM {
                             self.frame_count = frame_count;
                             return Ok(());
                         }
-                        
+
                         let frame = *frames_ptr.add(frame_count);
                         pc = frame.pc;
-                        
+
                         let ret_val = *regs_ptr.add(bp + a);
-                        
+
                         let prev_frame = *frames_ptr.add(frame_count - 1);
                         bp = prev_frame.base_pointer;
-                        
+
                         *regs_ptr.add(bp + frame.return_reg) = ret_val;
                     }
                     OpCode::Imprimir => {
@@ -212,10 +196,10 @@ impl VM {
                         let func_addr_val = *regs_ptr.add(bp + b);
                         // Check rápido de número
                         if (func_addr_val.0 & QNAN) == QNAN {
-                             return Err(format!("Intentando llamar a algo que no es una función (dirección): {:?} en registro BP+{}", func_addr_val, b));
+                            return Err(format!("Intentando llamar a algo que no es una función (dirección): {:?} en registro BP+{}", func_addr_val, b));
                         }
                         let func_addr = f64::from_bits(func_addr_val.0) as usize;
-                        
+
                         // Intento de JIT (Method JIT)
                         // Si estamos llamando a una función, intentamos compilar el chunk (si no lo está ya)
                         // y ejecutarlo desde func_addr.
@@ -228,10 +212,10 @@ impl VM {
                         // Pero para fib(30), la llamada inicial es UNA vez.
                         // Las llamadas recursivas ocurren DENTRO del JIT (call self).
                         // Así que esto solo se ejecuta una vez para la llamada raíz.
-                        
+
                         // Solo intentamos JIT si NO estamos ya en JIT (obvio, estamos en interpreter)
                         // y si la función parece ser candidata (e.g. fib).
-                        
+
                         // Hack: Probamos compilar. Si falla, seguimos interpretando.
                         // Pasamos el chunk actual.
                         // Necesitamos acceso mutable a JIT.
@@ -241,25 +225,32 @@ impl VM {
                         // Unsafe para evitar conflictos de borrow checker en el loop.
                         let jit_ptr = &mut self.jit as *mut Jit;
                         let chunk_ref = &*chunk; // Chunk es referencia en run
-                        
+
                         // Solo compilamos si es la primera vez? O siempre?
                         // Compile devuelve Result.
                         // JIT Compilation Attempt (Solo para funciones de 1 argumento por ahora)
                         // El JIT actual tiene una firma fija fn(pc, arg0, consts)
                         let arg_count = c;
                         if arg_count == 1 {
-                            match unsafe { (*jit_ptr).compile(chunk_ref, func_addr) } {
+                            match (*jit_ptr).compile(chunk_ref, func_addr) {
                                 Ok(jit_fn) => {
                                     let arg0_val = *regs_ptr.add(bp + b + 1); // Argumento 0 (n)
-                                    let arg0 = if arg0_val.es_numero() { arg0_val.a_numero() } else { 0.0 };
-                                    
+                                    let arg0 = if arg0_val.es_numero() {
+                                        arg0_val.a_numero()
+                                    } else {
+                                        0.0
+                                    };
+
                                     let res = jit_fn(func_addr, arg0, constants_ptr as *const u64);
-                                    
+
                                     *regs_ptr.add(bp + a) = Value::numero(res);
                                     continue;
                                 }
                                 Err(e) => {
-                                    println!("JIT compilation failed for chunk at {:?}: {}", func_addr, e);
+                                    println!(
+                                        "JIT compilation failed for chunk at {:?}: {}",
+                                        func_addr, e
+                                    );
                                 }
                             }
                         }
@@ -269,7 +260,7 @@ impl VM {
                         }
 
                         let new_base = bp + b + 1;
-                        
+
                         if frame_count >= MAX_FRAMES {
                             return Err("Stack overflow (demasiada recursión)".to_string());
                         }
@@ -280,7 +271,7 @@ impl VM {
                             return_reg: a,
                         };
                         frame_count += 1;
-                        
+
                         bp = new_base;
                         pc = func_addr;
                     }
@@ -323,7 +314,7 @@ mod tests {
 
         let result = vm.run(&chunk);
         assert!(result.is_ok());
-        
+
         // Verificar resultado en registro 2
         assert_eq!(vm.registers[2].a_numero(), 30.0);
     }

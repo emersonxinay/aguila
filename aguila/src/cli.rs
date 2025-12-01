@@ -1,19 +1,15 @@
-use std::fs;
-use std::io::{self, Write};
+use crate::analyzer::Analizador;
+use crate::compiler;
+use crate::interpreter::Interprete;
 use crate::lexer::Lexer;
 use crate::parser::Parser;
-use crate::interpreter::Interprete;
-use crate::compiler;
-use crate::analyzer::Analizador;
-use std::path::Path;
-use notify::{Watcher, RecursiveMode, Result as NotifyResult};
-use std::sync::mpsc::channel;
+use std::fs;
 
-pub fn cli_ejecutar(archivo: &str) -> Result<(), String> {
+pub async fn cli_ejecutar(archivo: &str) -> Result<(), String> {
     let contenido = fs::read_to_string(archivo)
         .map_err(|e| format!("Error al leer archivo '{}': {}", archivo, e))?;
 
-    ejecutar_codigo(&contenido)
+    ejecutar_codigo(&contenido).await
 }
 
 pub fn cli_chequear(archivo: &str) -> Result<(), String> {
@@ -39,7 +35,10 @@ pub fn cli_chequear(archivo: &str) -> Result<(), String> {
                 for error in &errores {
                     println!("  - {}", error);
                 }
-                Err(format!("Se encontraron {} errores de análisis", errores.len()))
+                Err(format!(
+                    "Se encontraron {} errores de análisis",
+                    errores.len()
+                ))
             }
         }
         Err(e) => Err(format!("Error de parseo: {}", e)),
@@ -58,7 +57,7 @@ pub fn cli_compilar(archivo: &str) -> Result<(), String> {
 
     let js_codigo = compiler::compilar(programa);
 
-    let archivo_salida = archivo.replace(".ag", ".js");
+    let archivo_salida = archivo.replace(".agl", ".js");
     fs::write(&archivo_salida, js_codigo)
         .map_err(|e| format!("Error al escribir archivo '{}': {}", archivo_salida, e))?;
 
@@ -66,7 +65,7 @@ pub fn cli_compilar(archivo: &str) -> Result<(), String> {
     Ok(())
 }
 
-pub fn ejecutar_codigo(codigo: &str) -> Result<(), String> {
+pub async fn ejecutar_codigo(codigo: &str) -> Result<(), String> {
     let mut lexer = Lexer::nuevo(codigo);
     let tokens = lexer.tokenizar();
 
@@ -74,7 +73,7 @@ pub fn ejecutar_codigo(codigo: &str) -> Result<(), String> {
     let programa = parser.parsear()?;
 
     let mut interprete = Interprete::nuevo();
-    let _ = interprete.ejecutar(programa)?;
+    let _ = interprete.ejecutar(programa).await?;
 
     Ok(())
 }
@@ -100,7 +99,7 @@ pub fn cli_vm(archivo: &str) -> Result<(), String> {
         Ok(programa) => {
             let compiler = crate::compiler_bytecode::Compiler::new();
             let chunk = compiler.compile(programa);
-            
+
             let mut vm = crate::vm::vm::VM::new();
             vm.run(&chunk)?;
             Ok(())

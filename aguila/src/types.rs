@@ -1,9 +1,11 @@
-use std::collections::{HashMap, HashSet};
-use std::rc::Rc;
+use postgres;
 use std::cell::RefCell;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::hash::{Hash, Hasher};
-use postgres;
+use std::rc::Rc;
+
+use futures::future::{LocalBoxFuture, Shared};
 
 #[derive(Clone)]
 pub struct NativeFn(pub Rc<dyn Fn(&[Value]) -> Result<Value, String>>);
@@ -63,14 +65,21 @@ pub enum Value {
     Diccionario(Rc<RefCell<HashMap<String, Value>>>),
     Conjunto(Rc<RefCell<HashSet<Value>>>),
     Nulo,
-    Funcion(Vec<String>, Vec<crate::ast::Sentencia>, Rc<RefCell<HashMap<String, Value>>>, bool),
+    Funcion(
+        Vec<String>,
+        Vec<crate::ast::Sentencia>,
+        Rc<RefCell<HashMap<String, Value>>>,
+        bool,
+    ),
     FuncionNativa(NativeFn),
+    #[allow(dead_code)]
     Clase(String, Rc<RefCell<HashMap<String, Value>>>), // Nombre, Scope de clase (métodos)
     Instancia {
         clase: String,
         atributos: Rc<RefCell<HashMap<String, Value>>>,
     },
     BaseDeDatos(DbClient),
+    Promesa(Shared<LocalBoxFuture<'static, Result<Value, String>>>),
 }
 
 impl Value {
@@ -109,6 +118,7 @@ impl Value {
             Value::Clase(nombre, _) => format!("<clase {}>", nombre),
             Value::Instancia { clase, .. } => format!("<instancia de {}>", clase),
             Value::BaseDeDatos(_) => "<conexión db>".to_string(),
+            Value::Promesa(_) => "<promesa>".to_string(),
         }
     }
 
@@ -133,7 +143,13 @@ impl Value {
         match self {
             Value::Numero(n) => *n,
             Value::Texto(s) => s.parse().unwrap_or(0.0),
-            Value::Logico(b) => if *b { 1.0 } else { 0.0 },
+            Value::Logico(b) => {
+                if *b {
+                    1.0
+                } else {
+                    0.0
+                }
+            }
             _ => 0.0,
         }
     }
@@ -147,15 +163,15 @@ impl PartialEq for Value {
             (Value::Logico(a), Value::Logico(b)) => a == b,
             (Value::Nulo, Value::Nulo) => true,
             (Value::Lista(a), Value::Lista(b)) => a == b, // Punteros iguales? No, contenido. Pero por ahora punteros o recursivo?
-                                                          // Para simplificar y evitar ciclos infinitos en comparaciones profundas,
-                                                          // Rust por defecto en Rc compara punteros. Si queremos valor, necesitamos deep eq.
-                                                          // Por ahora, asumamos igualdad de valor para primitivos y referencia para complejos
-                                                          // O mejor, igualdad estructural básica.
-                                                          // Dado que Value contiene Rc<RefCell<...>>, PartialEq derivado no funciona directo si no lo implementamos.
-                                                          // Aquí estamos implementando manualmente.
-                                                          // Para conjuntos necesitamos Eq completo.
-             // Implementación simplificada:
-             _ => false, 
+            // Para simplificar y evitar ciclos infinitos en comparaciones profundas,
+            // Rust por defecto en Rc compara punteros. Si queremos valor, necesitamos deep eq.
+            // Por ahora, asumamos igualdad de valor para primitivos y referencia para complejos
+            // O mejor, igualdad estructural básica.
+            // Dado que Value contiene Rc<RefCell<...>>, PartialEq derivado no funciona directo si no lo implementamos.
+            // Aquí estamos implementando manualmente.
+            // Para conjuntos necesitamos Eq completo.
+            // Implementación simplificada:
+            _ => false,
         }
     }
 }
@@ -178,21 +194,22 @@ impl Hash for Value {
             Value::Lista(l) => {
                 // Hashear la dirección del Rc para identidad referencial
                 (l.as_ptr() as usize).hash(state);
-            },
+            }
             Value::Diccionario(d) => {
                 (d.as_ptr() as usize).hash(state);
-            },
+            }
             Value::Conjunto(s) => {
                 (s.as_ptr() as usize).hash(state);
-            },
+            }
             Value::Funcion(_, _, _, _) => {
                 // Difícil hashear funciones, usamos discriminante
                 1.hash(state);
-            },
+            }
             Value::FuncionNativa(f) => f.hash(state),
             Value::Clase(nombre, _) => nombre.hash(state),
             Value::Instancia { clase, .. } => clase.hash(state), // Podríamos hashear la identidad del objeto
             Value::BaseDeDatos(db) => db.hash(state),
+            Value::Promesa(_) => 2.hash(state), // Discriminante para promesas
         }
     }
 }
