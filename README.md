@@ -1,12 +1,10 @@
-# 🦅 Águila 
-
 # Águila - El Primer Lenguaje de Programación Profesional de Latinoamérica 🦅
 
 ![Logo Águila](https://raw.githubusercontent.com/emersonxinay/aguila/main/logo_aguila.svg)
 
 > **Creado por [Emerson Espinoza](https://github.com/emersonxinay)**
 
-**Águila** es un lenguaje de programación moderno, compilado y de alto rendimiento, diseñado desde cero en **Rust**. A diferencia de otros lenguajes educativos, Águila está construido para ser **profesional**, con un JIT Compiler, gestión de memoria avanzada y herramientas de producción.
+**Águila** es un lenguaje de programación moderno, diseñado para ser la herramienta definitiva para desarrolladores de habla hispana. A diferencia de lenguajes educativos, Águila es **profesional**, compilado y de alto rendimiento, listo para construir software real.
 
 [![NPM Version](https://img.shields.io/npm/v/aguila-lang)](https://www.npmjs.com/package/aguila-lang)
 [![VS Code Extension](https://img.shields.io/visual-studio-marketplace/v/aguila-lang.aguila-vscode)](https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode)
@@ -16,11 +14,11 @@
 
 ## 💡 ¿Por qué Águila?
 
-Águila es un lenguaje de programación moderno diseñado para eliminar la barrera del idioma. Combina la sintaxis amigable de Python con el rendimiento de un lenguaje compilado como Rust.
+Águila rompe la barrera del idioma sin sacrificar potencia. Es la fusión perfecta entre la **simplicidad de Python** y la **velocidad de Rust**.
 
-*   **Código Nativo:** Escribe `si`, `mientras`, `funcion`. Piensa y programa en tu idioma.
-*   **Rendimiento Real:** Compilado a código máquina. Es rápido, eficiente y robusto.
-*   **Curva de Aprendizaje Cero:** Si conoces Python, ya sabes Águila.
+*   **100% en Español:** Escribe `si`, `mientras`, `funcion`. Tu código habla tu idioma.
+*   **Potencia Profesional:** No es un juguete. Es un lenguaje compilado capaz de ejecutar algoritmos complejos y aplicaciones reales.
+*   **Ecosistema Moderno:** Cuenta con su propio gestor de paquetes, extensión oficial para VS Code y herramientas de desarrollo de clase mundial.
 
 ---
 
@@ -49,7 +47,7 @@ Para la mejor experiencia, instala la extensión oficial en **Visual Studio Code
 ```aguila
 # Inferencia de tipos (Dinámico)
 nombre = "Águila"
-version = 2.4
+version = 2.6
 
 # Tipado Estático (Opcional)
 contador: Numero = 0
@@ -59,14 +57,14 @@ activo: Logico = verdadero
 ### Control de Flujo
 ```aguila
 si edad >= 18 {
-    imprimir "Eres mayor de edad"
+    imprime("Eres mayor de edad")
 } sino {
-    imprimir "Eres menor"
+    imprime("Eres menor")
 }
 
 # Bucles naturales
 para i = 1 hasta 10 {
-    imprimir f"Contando: ${i}"
+    imprime(a"Contando: {i}")
 }
 
 mientras activo {
@@ -77,10 +75,10 @@ mientras activo {
 ### Funciones
 ```aguila
 funcion saludar(nombre) {
-    retornar f"Hola, ${nombre}!"
+    retornar a"Hola, {nombre}!"
 }
 
-imprimir saludar("Mundo")
+imprime(saludar("Mundo"))
 ```
 
 ### Estructuras de Datos
@@ -95,24 +93,8 @@ usuario = {
     "nombre": "Emerson",
     "rol": "Admin"
 }
-imprimir usuario.obtener("nombre")
+imprime(usuario["nombre"])
 ```
-
----
-
-## � Potencia Algorítmica
-
-**¿Es Águila un "juguete"? Definitivamente NO.**
-
-Águila tiene **paridad lógica del 100% con Python**. Todo lo que puedes resolver en una entrevista técnica o en LeetCode con Python, puedes hacerlo en Águila.
-
-| Nivel | Conceptos | Estado en Águila |
-| :--- | :--- | :--- |
-| **Básico** | Bucles, Condicionales, Matemáticas | ✅ Idéntico a Python |
-| **Intermedio** | Listas, Diccionarios, Ordenamiento | ✅ Nativo y Optimizado |
-| **Avanzado** | Recursión, Backtracking, Grafos (BFS/DFS) | ✅ Soporte Completo (v2.4) |
-
-> **Dato:** Hemos verificado algoritmos complejos como *N-Queens*, *Sudoku Solver* y *Árboles Binarios* corriendo nativamente en Águila.
 
 ---
 
@@ -125,8 +107,8 @@ El mismo poder, en tu idioma.
 | Definir función | `def suma(a, b):` | `funcion suma(a, b) {` |
 | Condicional | `if x > 0:` | `si x > 0 {` |
 | Bucle | `for i in range(10):` | `para i = 0 hasta 10 {` |
-| Imprimir | `print("Hola")` | `imprimir("Hola")` |
-| Break | `break` | `romper` |
+| Imprimir | `print("Hola")` | `imprime("Hola")` |
+| Interpolación | `f"Hola {x}"` | `a"Hola {x}"` |
 
 ---
 
