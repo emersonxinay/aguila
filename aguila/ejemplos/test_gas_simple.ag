@@ -1,9 +1,0 @@
-gas = [1]
-costo = [3]
-tanque = 0
-i = 0
-# tanque = tanque + gas[i] - costo[i]
-x = gas[i]
-y = costo[i]
-tanque = tanque + x - y
-imprimir tanque
