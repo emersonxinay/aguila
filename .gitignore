@@ -1,12 +1,14 @@
 GUIA_DISTRIBUCION.md
 historial.txt
 # Rust
-aguila/target/
+target/
+**/target/
 **/*.rs.bk
 Cargo.lock
 
 # Node
 node_modules/
+**/node_modules/
 npm/node_modules/
 *.log
 
@@ -25,3 +27,4 @@ prueba_io.txt
 *.js
 !npm/*.js
 !ejemplos/**/*.js
+debug_output_*.txt

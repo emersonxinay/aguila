@@ -97,11 +97,7 @@ imprimir usuario.obtener("nombre")
 
 ---
 
-imprimir usuario.obtener("nombre")
-
----
-
-## 🧠 Potencia Algorítmica
+## � Potencia Algorítmica
 
 **¿Es Águila un "juguete"? Definitivamente NO.**
 

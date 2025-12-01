@@ -1,0 +1,317 @@
+   Compiling aguila v2.4.3 (/Users/emersonespinoza/Documents/proyectos/proyecto_nuevo_lenguaje/aguila)
+warning: unused import: `std::sync::mpsc::channel`
+ --> src/cli.rs:7:5
+  |
+7 | use std::sync::mpsc::channel;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Expresion`
+ --> src/repl.rs:6:29
+  |
+6 | use crate::ast::{Sentencia, Expresion};
+  |                             ^^^^^^^^^
+
+warning: unused imports: `Add`, `Div`, `Mul`, `Neg`, and `Sub`
+ --> src/vm/value.rs:2:16
+  |
+2 | use std::ops::{Add, Sub, Mul, Div, Neg};
+  |                ^^^  ^^^  ^^^  ^^^  ^^^
+
+warning: unused import: `std::io::Write`
+ --> src/vm/vm.rs:1:5
+  |
+1 | use std::io::Write;
+  |     ^^^^^^^^^^^^^^
+
+warning: unused import: `TAG_TRUE`
+ --> src/vm/vm.rs:3:58
+  |
+3 | use crate::vm::value::{Value, QNAN, TAG_NULO, TAG_FALSE, TAG_TRUE};
+  |                                                          ^^^^^^^^
+
+warning: unused import: `Value as AgValue`
+  --> src/vm/jit.rs:11:24
+   |
+11 | use crate::vm::value::{Value as AgValue, QNAN, TAG_NULO, TAG_FALSE, TAG_TRUE, TAG_INT};
+   |                        ^^^^^^^^^^^^^^^^
+
+warning: unused attribute
+   --> src/vm/value.rs:118:5
+    |
+118 |     #[inline(always)]
+    |     ^^^^^^^^^^^^^^^^^ help: remove this attribute
+    |
+note: attribute also specified here
+   --> src/vm/value.rs:117:5
+    |
+117 |     #[inline(always)]
+    |     ^^^^^^^^^^^^^^^^^
+    = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+    = note: `#[warn(unused_attributes)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `stream_clone`
+   --> src/interpreter.rs:289:29
+    |
+289 |                         let stream_clone = stream.try_clone().expect("Error al clonar stream");
+    |                             ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_stream_clone`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `nombre_modulo`
+   --> src/interpreter.rs:699:21
+    |
+699 |                 let nombre_modulo = alias.clone().unwrap_or_else(|| {
+    |                     ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_nombre_modulo`
+
+warning: unused variable: `global_scope_ref`
+   --> src/interpreter.rs:731:21
+    |
+731 |                 let global_scope_ref = modulo_interprete.variables.first().unwrap().clone();
+    |                     ^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_global_scope_ref`
+
+warning: variable does not need to be mutable
+    --> src/interpreter.rs:1149:17
+     |
+1149 |             let mut instancia = Value::Instancia { clase: clase_nombre.to_string(), atributos: Rc::new(RefCell::new(objeto)) };
+     |                 ----^^^^^^^^^
+     |                 |
+     |                 help: remove this `mut`
+     |
+     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:357:42
+    |
+357 | ...                   let module = unsafe { &self.modules[idx] };
+    |                                    ^^^^^^ unnecessary `unsafe` block
+    |
+    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:428:98
+    |
+165 |             unsafe {
+    |             ------ because it's nested under this `unsafe` block
+...
+428 |                                     let jit_func: extern "C" fn(usize, i64, *const u64) -> i64 = unsafe { std::mem::transmute(jit_addr) };
+    |                                                                                                  ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:447:90
+    |
+165 |             unsafe {
+    |             ------ because it's nested under this `unsafe` block
+...
+447 |                             let jit_func: extern "C" fn(usize, i64, *const u64) -> i64 = unsafe { std::mem::transmute(jit_addr) };
+    |                                                                                          ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:472:39
+    |
+165 |             unsafe {
+    |             ------ because it's nested under this `unsafe` block
+...
+472 |                                 match unsafe { (*jit_ptr).compile(chunk_ref, func_addr, true) } {
+    |                                       ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:476:102
+    |
+165 | ...   unsafe {
+    |       ------ because it's nested under this `unsafe` block
+...
+476 | ...                               let jit_func: extern "C" fn(usize, i64, *const u64) -> i64 = unsafe { std::mem::transmute(jit_addr) };
+    |                                                                                                ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:496:35
+    |
+165 |             unsafe {
+    |             ------ because it's nested under this `unsafe` block
+...
+496 |                             match unsafe { (*jit_ptr).compile(chunk_ref, func_addr, false) } {
+    |                                   ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:500:98
+    |
+165 |             unsafe {
+    |             ------ because it's nested under this `unsafe` block
+...
+500 |                                     let jit_func: extern "C" fn(usize, i64, *const u64) -> i64 = unsafe { std::mem::transmute(jit_addr) };
+    |                                                                                                  ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> src/vm/vm.rs:521:25
+    |
+165 |             unsafe {
+    |             ------ because it's nested under this `unsafe` block
+...
+521 |                         unsafe {
+    |                         ^^^^^^ unnecessary `unsafe` block
+
+warning: variable does not need to be mutable
+  --> src/vm/jit.rs:33:13
+   |
+33 |         let mut builder = JITBuilder::with_isa(isa, cranelift_module::default_libcall_names());
+   |             ----^^^^^^^
+   |             |
+   |             help: remove this `mut`
+
+warning: unused variable: `spill_slot`
+   --> src/vm/jit.rs:120:13
+    |
+120 |         let spill_slot = builder.create_sized_stack_slot(StackSlotData::new(StackSlotKind::ExplicitSlot, 8, 0));
+    |             ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_spill_slot`
+
+warning: unused variable: `current_pc`
+   --> src/vm/jit.rs:140:21
+    |
+140 |                 let current_pc = pc;
+    |                     ^^^^^^^^^^
+    |
+help: if this is intentional, prefix it with an underscore
+    |
+140 |                 let _current_pc = pc;
+    |                     +
+help: you might have meant to pattern match on the similarly named constant `MAX_INLINE_DEPTH`
+    |
+140 -                 let current_pc = pc;
+140 +                 let vm::jit::MAX_INLINE_DEPTH = pc;
+    |
+
+warning: value assigned to `current_block_terminated` is never read
+   --> src/vm/jit.rs:220:21
+    |
+220 |                     current_block_terminated = true;
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `current_pc`
+   --> src/vm/jit.rs:226:21
+    |
+226 |                 let current_pc = pc;
+    |                     ^^^^^^^^^^
+    |
+help: if this is intentional, prefix it with an underscore
+    |
+226 |                 let _current_pc = pc;
+    |                     +
+help: you might have meant to pattern match on the similarly named constant `MAX_INLINE_DEPTH`
+    |
+226 -                 let current_pc = pc;
+226 +                 let vm::jit::MAX_INLINE_DEPTH = pc;
+    |
+
+warning: value assigned to `current_block_terminated` is never read
+   --> src/vm/jit.rs:580:21
+    |
+580 |                     current_block_terminated = true;
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: value assigned to `current_block_terminated` is never read
+   --> src/vm/jit.rs:587:21
+    |
+587 |                     current_block_terminated = true;
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: value assigned to `current_block_terminated` is never read
+   --> src/vm/jit.rs:594:21
+    |
+594 |                     current_block_terminated = true;
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: value assigned to `current_block_terminated` is never read
+   --> src/vm/jit.rs:634:21
+    |
+634 |                     current_block_terminated = true;
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: unused variable: `addr`
+  --> src/stdlib/net.rs:70:25
+   |
+70 |             Ok((stream, addr)) => {
+   |                         ^^^^ help: if this is intentional, prefix it with an underscore: `_addr`
+
+warning: variant `Dos` is never constructed
+  --> src/ast.rs:51:5
+   |
+ 2 | pub enum Token {
+   |          ----- variant in this enum
+...
+51 |     Dos,
+   |     ^^^
+   |
+   = note: `Token` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: variant `Clase` is never constructed
+  --> src/types.rs:68:5
+   |
+58 | pub enum Value {
+   |          ----- variant in this enum
+...
+68 |     Clase(String, Rc<RefCell<HashMap<String, Value>>>), // Nombre, Scope de clase (métodos)
+   |     ^^^^^
+   |
+   = note: `Value` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: method `free_register` is never used
+   --> src/compiler_bytecode.rs:354:8
+    |
+ 14 | impl Compiler {
+    | ------------- method in this implementation
+...
+354 |     fn free_register(&mut self, _reg: u8) {
+    |        ^^^^^^^^^^^^^
+
+warning: variant `Not` is never constructed
+  --> src/vm/chunk.rs:29:5
+   |
+11 | pub enum OpCode {
+   |          ------ variant in this enum
+...
+29 |     Not = 17,              // R[A] = !R[B]
+   |     ^^^
+   |
+   = note: `OpCode` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: unused `std::result::Result` that must be used
+  --> src/main.rs:58:13
+   |
+58 |             cli_chequear(archivo);
+   |             ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this `Result` may be an `Err` variant, which should be handled
+   = note: `#[warn(unused_must_use)]` (part of `#[warn(unused)]`) on by default
+help: use `let _ = ...` to ignore the resulting value
+   |
+58 |             let _ = cli_chequear(archivo);
+   |             +++++++
+
+warning: `aguila` (bin "aguila") generated 34 warnings (run `cargo fix --bin "aguila"` to apply 11 suggestions)
+    Finished `release` profile [optimized] target(s) in 1m 24s
+     Running `target/release/aguila vm ../benchmarks/fib.ag`
+DEBUG: compile_chunk start depth=0
+DEBUG: BFS pop pc=1
+DEBUG: BFS pop pc=5
+DEBUG: BFS pop pc=4
+DEBUG: CodeGen block start_pc=1
+DEBUG: CodeGen block start_pc=4
+DEBUG: CodeGen block start_pc=5
+"Águila: Fib(30) ="
+832040
+"Tiempo (segundos):"
+0.013635873794555664

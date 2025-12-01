@@ -1,0 +1,11 @@
+imprimir("Inicio")
+si verdadero {
+    imprimir("Verdadero funciona")
+}
+sino si falso {
+    imprimir("Negacion funciona")
+}
+sino {
+    imprimir("Negacion funciona")
+}
+imprimir("Fin")

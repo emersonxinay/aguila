@@ -1,0 +1,18 @@
+imprimir "Paso 1: Strings"
+let s = "Hola"
+imprimir s
+
+imprimir "Paso 2: Numeros"
+let n = 123
+imprimir n
+
+imprimir "Paso 3: Globales"
+# net es global
+# imprimir net # No implementado imprimir modulo
+
+imprimir "Paso 4: Acceso Propiedad"
+# let f = net.escuchar # Esto deberia devolver funcion nativa
+# imprimir f # No implementado imprimir nativa
+
+imprimir "Paso 5: Llamada"
+net.escuchar(8080)

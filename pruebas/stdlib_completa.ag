@@ -1,0 +1,63 @@
+funcion assert(cond, msg) {
+    si no cond {
+        imprimir("❌ FALLO: " + msg);
+        lanzar(msg);
+    }
+    imprimir("✅ PASS: " + msg);
+}
+
+imprimir("--- Iniciando Pruebas de Biblioteca Estándar ---")
+
+# 1. Pruebas de Texto
+imprimir("\n[Pruebas de Texto]")
+t = "Hola Mundo"
+assert(t.mayusculas() == "HOLA MUNDO", "mayusculas")
+assert(t.minusculas() == "hola mundo", "minusculas")
+assert(t.longitud() == 10, "longitud")
+assert(t.contiene("Mundo"), "contiene verdadero")
+assert(no t.contiene("Adiós"), "contiene falso")
+assert(t.reemplazar("Mundo", "Águila") == "Hola Águila", "reemplazar")
+
+t2 = "  abc  "
+assert(t2.recortar() == "abc", "recortar")
+
+lista = "a,b,c".dividir(",")
+assert(lista.longitud() == 3, "dividir longitud")
+assert(lista[0] == "a", "dividir elemento 0")
+
+# 2. Pruebas de Lista
+imprimir("\n[Pruebas de Lista]")
+l = [1, 2]
+l.agregar(3)
+assert(l.longitud() == 3, "agregar y longitud")
+assert(l[2] == 3, "acceso tras agregar")
+
+l.invertir()
+assert(l[0] == 3, "invertir")
+
+eliminado = l.eliminar(0) # Elimina índice 0 (que es 3)
+assert(eliminado == 3, "eliminar retorno")
+assert(l.longitud() == 2, "longitud tras eliminar")
+
+l.limpiar()
+assert(l.longitud() == 0, "limpiar")
+
+l2 = ["a", "b", "c"]
+unido = l2.unir("-")
+assert(unido == "a-b-c", "unir")
+
+# 3. Pruebas de Módulo Matemático
+imprimir("\n[Pruebas de Módulo Mate]")
+importar mate
+
+assert(mate.raiz(4) == 2, "mate.raiz")
+assert(mate.potencia(2, 3) == 8, "mate.potencia")
+assert(mate.piso(2.9) == 2, "mate.piso")
+assert(mate.techo(2.1) == 3, "mate.techo")
+
+# Aleatorio (solo verificamos que devuelva numero)
+rnd = mate.aleatorio()
+imprimir("Aleatorio: " + rnd)
+# No tenemos 'es_numero' aun en stdlib, pero si no falla es bueno.
+
+imprimir("\n--- Todas las pruebas pasaron exitosamente ---")

@@ -1,200 +1,334 @@
+#![allow(dead_code)]
+use std::fmt;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
     // Literales
     Numero(f64),
     Texto(String),
-    TextoInterpolado(String),
+    TextoInterpolado(String), // f"Hola {nombre}"
     Identificador(String),
 
-    // Palabras clave
-    Funcion,
-    Si,
-    Sino,
-    Mientras,
-    Para,
-    En,
-    Hasta,
-    Clase,
-    Imprimir,
-    Verdadero,
-    Falso,
-    Nulo,
-    Importar,
-    Retornar,
-    Intentar,
-    Capturar,
-    Nuevo,
-    Asincrono,
-    Esperar,
-    Segun,
-    Caso,
-    Defecto,
-    Romper,
-    Continuar,
+    // Palabras clave (Español)
+    Si,         // if
+    Sino,       // else
+    Mientras,   // while
+    Para,       // for
+    En,         // in
+    Romper,     // break
+    Continuar,  // continue
+    Retornar,   // return
+    Funcion,    // def / fn
+    Clase,      // class
+    Verdadero,  // True
+    Falso,      // False
+    Nulo,       // None
+    Y,          // and
+    O,          // or
+    No,         // not
+    Importar,   // import
+    Desde,      // from
+    Como,       // as
+    Intentar,   // try
+    Capturar,   // except / catch
+    Finalmente, // finally
+    Lanzar,     // raise / throw
+    Global,     // global
+    NoLocal,    // nonlocal
+    Pasar,      // pass
+    Eliminar,   // del
+    Con,        // with
+    Asincrono,  // async
+    Esperar,    // await
+    Ceder,      // yield
+    Segun,      // match
+    Caso,       // case
+    Defecto,    // default (opcional en match)
+    Imprimir,   // print (como sentencia o función nativa)
+    Afirmar,    // assert
+    Nuevo,      // new (opcional, si queremos instanciación explícita)
+    Let,        // let (opcional, para variables locales explícitas)
 
-    // Operadores
-    Mas,
-    Menos,
-    Por,
-    Div,
+    // Operadores Aritméticos
+    Mas,       // +
+    Menos,     // -
+    Por,       // *
+    Div,       // /
+    DivEntera, // //
+    Modulo,    // %
+    Potencia,  // **
+
+    // Operadores de Asignación Aumentada
+    MasIgual,       // +=
+    MenosIgual,     // -=
+    PorIgual,       // *=
+    DivIgual,       // /=
+    DivEnteraIgual, // //=
+    ModuloIgual,    // %=
+    PotenciaIgual,  // **=
+
+    // Operadores de Comparación
+    Igual,      // ==
+    NoIgual,    // !=
+    Mayor,      // >
+    Menor,      // <
+    MayorIgual, // >=
+    MenorIgual, // <=
+
+    // Operadores Bitwise
+    Ampersand, // &
+    Barra,     // |
+    Caret,     // ^
+    Tilde,     // ~
+    ShiftIzq,  // <<
+    ShiftDer,  // >>
+
+    // Símbolos y Delimitadores
+    ParAbre,        // (
+    ParCierra,      // )
+    CorcheteAbre,   // [
+    CorcheteCierra, // ]
+    LlaveAbre,      // {
+    LlaveCierra,    // }
+    Coma,           // ,
+    Punto,          // .
+    DosPuntos,      // :
+    PuntoYComa,     // ;
+    Flecha,         // ->
+    Arroba,         // @ (Decoradores)
+    Asignacion,     // =
+
+    // Especiales
+    EOF,
+    Error(String),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum OperadorUnario {
+    Negativo, // -
+    Not,      // no
+    BitNot,   // ~
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum OperadorBinario {
+    Suma,
+    Resta,
+    Multiplicacion,
+    Division,
+    DivisionEntera,
+    Modulo,
+    Potencia,
+    Igual,
+    NoIgual,
     Mayor,
     Menor,
     MayorIgual,
     MenorIgual,
-    Igual,
-    NoIgual,
-    Asignacion,
-    Punto,
-    DosPuntos,
-    Coma,
-    Dos,
-    Flecha,
-    Modulo,
-    DivEntera,
-    Potencia,
-    MasIgual,
-    MenosIgual,
     Y,
     O,
-    No,
-
-    // Delimitadores
-    ParAbre,
-    ParCierra,
-    LlaveAbre,
-    LlaveCierra,
-    CorcheteAbre,
-    CorcheteCierra,
-
-    // Control
-    EOF,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum Sentencia {
-    Asignacion {
-        nombre: String,
-        tipo: Option<String>,
-        valor: Expresion,
-    },
-    AsignacionIndice {
-        objeto: Expresion,
-        indice: Expresion,
-        valor: Expresion,
-    },
-    AsignacionAtributo {
-        objeto: Expresion,
-        atributo: String,
-        valor: Expresion,
-    },
-    Expresion(Expresion),
-    Si {
-        condicion: Expresion,
-        si_bloque: Vec<Sentencia>,
-        sino_bloque: Option<Vec<Sentencia>>,
-    },
-    Mientras {
-        condicion: Expresion,
-        bloque: Vec<Sentencia>,
-    },
-    Para {
-        variable: String,
-        iterador: Expresion,
-        bloque: Vec<Sentencia>,
-    },
-    ParaRango {
-        variable: String,
-        inicio: Expresion,
-        fin: Expresion,
-        bloque: Vec<Sentencia>,
-    },
-    Funcion {
-        nombre: String,
-        parametros: Vec<(String, Option<String>)>,
-        retorno_tipo: Option<String>,
-        bloque: Vec<Sentencia>,
-        es_asincrona: bool,
-    },
-    Clase {
-        nombre: String,
-        padre: Option<String>,
-        atributos: Vec<(String, Option<String>)>,
-        metodos: Vec<(String, Vec<(String, Option<String>)>, Vec<Sentencia>)>,
-    },
-    Retorno(Option<Expresion>),
-    Importar {
-        ruta: String,
-        alias: Option<String>,
-    },
-    Intentar {
-        bloque_intentar: Vec<Sentencia>,
-        variable_error: String,
-        bloque_capturar: Vec<Sentencia>,
-    },
-    Imprimir(Expresion),
-    Segun {
-        expresion: Expresion,
-        casos: Vec<(Expresion, Vec<Sentencia>)>,
-        defecto: Option<Vec<Sentencia>>,
-    },
-    Romper,
-    Continuar,
+    BitAnd,
+    BitOr,
+    BitXor,
+    ShiftIzq,
+    ShiftDer,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Expresion {
-    Numero(f64),
-    Texto(String),
-    Logico(bool),
-    Nulo,
+    // Abstract Syntax Tree (AST)Datos
+    // Valores Básicos
+    Literal(Literal),
     Identificador(String),
+
+    // Estructuras de Datos
     Lista(Vec<Expresion>),
-    Diccionario(Vec<(String, Expresion)>),
-    Interpolacion(Vec<Expresion>),
-    BinOp {
+    Diccionario(Vec<(Expresion, Expresion)>),
+    Conjunto(Vec<Expresion>),
+
+    // Operaciones
+    Binaria {
         izq: Box<Expresion>,
-        op: String,
+        op: OperadorBinario,
         der: Box<Expresion>,
     },
-    Llamada {
-        nombre: String,
-        args: Vec<Expresion>,
+    Unaria {
+        op: OperadorUnario,
+        exp: Box<Expresion>,
     },
-    MetodoLlamada {
-        objeto: Box<Expresion>,
-        metodo: String,
+
+    // Funciones y Métodos
+    Llamada {
+        func: Box<Expresion>,
         args: Vec<Expresion>,
     },
     AccesoAtributo {
         objeto: Box<Expresion>,
         atributo: String,
     },
-    AsignacionAtributo {
-        objeto: Box<Expresion>,
-        atributo: String,
-        valor: Box<Expresion>,
-    },
-    Instancia {
-        clase: String,
-        args: Vec<Expresion>,
-    },
     AccesoIndice {
         objeto: Box<Expresion>,
         indice: Box<Expresion>,
     },
-    FuncionAnonima {
-        parametros: Vec<String>,
-        bloque: Vec<Sentencia>,
-        es_asincrona: bool,
+
+    // Avanzados
+    Ternaria {
+        condicion: Box<Expresion>,
+        verdadero: Box<Expresion>,
+        falso: Box<Expresion>,
     },
-    Esperar(Box<Expresion>),
-    UnOp {
-        op: String,
-        der: Box<Expresion>,
+    Lambda {
+        params: Vec<String>,
+        cuerpo: Box<Expresion>,
     },
+
+    // Asincronía y Generadores
+    Await(Box<Expresion>),
+    Yield(Option<Box<Expresion>>),
+
+    // Comprehensions (Listas por comprensión)
+    // [x * 2 para x en lista si x > 0]
+    ComprehensionLista {
+        elemento: Box<Expresion>,
+        variable: String,
+        iterable: Box<Expresion>,
+        condicion: Option<Box<Expresion>>,
+    },
+
+    // Interpolación de Strings
+    Interpolacion(Vec<Expresion>), // Fragmentos de string y expresiones
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
+pub enum Literal {
+    Entero(i64),
+    Decimal(f64),
+    Texto(String),
+    Booleano(bool),
+    Nulo,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Sentencia {
+    // Básicas
+    Expresion(Expresion),
+    Asignacion {
+        objetivo: Expresion, // Puede ser variable, atributo o índice
+        valor: Expresion,
+        tipo: Option<String>, // Hint de tipo opcional
+    },
+    AsignacionAumentada {
+        objetivo: Expresion,
+        op: OperadorBinario,
+        valor: Expresion,
+    },
+
+    // Control de Flujo
+    Si {
+        condicion: Expresion,
+        entonces: Vec<Sentencia>,
+        sino: Option<Vec<Sentencia>>,
+    },
+    Mientras {
+        condicion: Expresion,
+        cuerpo: Vec<Sentencia>,
+    },
+    Para {
+        variable: String,
+        iterable: Expresion,
+        cuerpo: Vec<Sentencia>,
+    },
+    Segun {
+        // Match / Switch
+        valor: Expresion,
+        casos: Vec<Caso>,
+        defecto: Option<Vec<Sentencia>>,
+    },
+
+    // Saltos
+    Romper,
+    Continuar,
+    Retornar(Option<Expresion>),
+    Lanzar(Expresion),
+    Pasar,
+
+    // Definiciones
+    Funcion {
+        nombre: String,
+        params: Vec<Parametro>,
+        cuerpo: Vec<Sentencia>,
+        es_async: bool,
+        decoradores: Vec<Expresion>,
+    },
+    Clase {
+        nombre: String,
+        herencia: Vec<String>,
+        cuerpo: Vec<Sentencia>,
+        decoradores: Vec<Expresion>,
+    },
+
+    // Manejo de Errores
+    TryCatch {
+        cuerpo: Vec<Sentencia>,
+        capturas: Vec<Captura>,
+        finalmente: Option<Vec<Sentencia>>,
+    },
+
+    // Contexto
+    Con {
+        items: Vec<(Expresion, Option<String>)>, // (expresion, alias)
+        cuerpo: Vec<Sentencia>,
+    },
+
+    // Módulos
+    Importar {
+        modulo: String,
+        alias: Option<String>,
+    },
+    DesdeImportar {
+        modulo: String,
+        elementos: Vec<(String, Option<String>)>, // (nombre, alias)
+    },
+
+    // Variables
+    Global(Vec<String>),
+    NoLocal(Vec<String>),
+
+    // Debug
+    Imprimir(Vec<Expresion>),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Parametro {
+    pub nombre: String,
+    pub tipo: Option<String>,
+    pub valor_por_defecto: Option<Expresion>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Caso {
+    pub patron: Patron,
+    pub guarda: Option<Expresion>,
+    pub cuerpo: Vec<Sentencia>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Patron {
+    Literal(Literal),
+    Identificador(String),
+    Comodin, // _
+    Lista(Vec<Patron>),
+    // Se pueden agregar más patrones (estructuras, or, etc.)
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Captura {
+    pub tipo: Option<String>,     // Tipo de excepción
+    pub variable: Option<String>, // variable donde se captura 'as e'
+    pub cuerpo: Vec<Sentencia>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Programa {
     pub sentencias: Vec<Sentencia>,
 }

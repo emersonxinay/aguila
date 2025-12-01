@@ -1,0 +1,18 @@
+funcion manejar_cliente(cliente) {
+    imprimir "Cliente conectado en hilo!"
+    let mensaje = cliente.leer()
+    imprimir "Mensaje recibido:"
+    imprimir mensaje
+    cliente.escribir("Hola desde el servidor Águila (Thread)!")
+    imprimir "Respuesta enviada"
+}
+
+imprimir "Iniciando servidor..."
+let servidor = net.escuchar(8080)
+imprimir "Servidor escuchando en puerto 8080"
+
+mientras verdadero {
+    imprimir "Esperando cliente..."
+    let cliente = servidor.aceptar()
+    hilo.crear(manejar_cliente, cliente)
+}

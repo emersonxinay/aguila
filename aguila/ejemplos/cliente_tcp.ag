@@ -1,0 +1,12 @@
+# Cliente TCP Simple
+imprimir "Conectando al servidor..."
+
+let socket = net.conectar("127.0.0.1", 8080)
+imprimir "Conectado!"
+
+socket.escribir("Hola servidor, soy el cliente!")
+imprimir "Mensaje enviado"
+
+let respuesta = socket.leer()
+imprimir "Respuesta del servidor:"
+imprimir respuesta

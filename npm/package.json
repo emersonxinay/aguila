@@ -1,6 +1,6 @@
 {
     "name": "aguila-lang",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "description": "Lenguaje de programación Águila - Sintaxis en español, velocidad de Rust",
     "bin": {
         "aguila": "cli.js"

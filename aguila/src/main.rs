@@ -1,17 +1,19 @@
+mod analyzer;
 mod ast;
-mod lexer;
-mod parser;
-mod types;
-mod interpreter;
 mod cli;
 mod compiler;
 mod compiler_bytecode;
-mod analyzer;
+mod compiler_rust;
+mod interpreter;
+mod lexer;
+mod parser;
 mod repl;
+mod stdlib;
+mod types;
 mod vm;
 
+use cli::{cli_chequear, cli_compilar, cli_dev, cli_ejecutar, cli_rustc, cli_vm};
 use std::env;
-use cli::{cli_ejecutar, cli_chequear, cli_compilar, cli_dev, cli_vm};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -36,7 +38,7 @@ fn main() {
                 eprintln!("Error: {}", e);
                 std::process::exit(1);
             }
-        },
+        }
         "vm" => {
             if args.len() < 3 {
                 eprintln!("Uso: aguila vm <archivo.ag>");
@@ -47,7 +49,18 @@ fn main() {
                 eprintln!("Error: {}", e);
                 std::process::exit(1);
             }
-        },
+        }
+        "rustc" => {
+            if args.len() < 3 {
+                eprintln!("Uso: aguila rustc <archivo.ag>");
+                return;
+            }
+            let archivo = &args[2];
+            if let Err(e) = cli_rustc(archivo) {
+                eprintln!("Error: {}", e);
+                std::process::exit(1);
+            }
+        }
         "chequear" => {
             if args.len() < 3 {
                 eprintln!("Uso: aguila chequear <archivo.ag>");
@@ -55,7 +68,7 @@ fn main() {
             }
             let archivo = &args[2];
             cli_chequear(archivo);
-        },
+        }
         "compilar" => {
             if args.len() < 3 {
                 eprintln!("Uso: aguila compilar <archivo.ag>");
@@ -68,7 +81,7 @@ fn main() {
             } else {
                 println!("Compilación exitosa.");
             }
-        },
+        }
         "dev" => {
             if args.len() < 3 {
                 eprintln!("Uso: aguila dev <archivo.ag>");
@@ -76,7 +89,7 @@ fn main() {
             }
             let archivo = &args[2];
             cli_dev(archivo);
-        },
+        }
         "--version" => {
             println!("aguila v{}", VERSION);
         }
@@ -85,7 +98,7 @@ fn main() {
         }
         // Si el primer argumento termina en .ag, ejecutarlo directamente
         arg if arg.ends_with(".ag") => {
-             if let Err(e) = cli::cli_ejecutar(arg) {
+            if let Err(e) = cli::cli_ejecutar(arg) {
                 eprintln!("Error: {}", e);
                 std::process::exit(1);
             }

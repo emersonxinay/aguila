@@ -1,0 +1,11 @@
+imprimir("Test 1: Basic print")
+
+imprimir("Test 2: Variable")
+a = 5
+imprimir(a)
+
+imprimir("Test 3: Float")
+b = 2.5
+imprimir(b)
+
+imprimir("Done!")

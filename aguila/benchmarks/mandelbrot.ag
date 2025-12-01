@@ -1,0 +1,56 @@
+# Benchmark: Conjunto de Mandelbrot
+# Prueba intensiva de punto flotante y bucles anidados
+
+funcion mandelbrot(max_iter) {
+    let x_min = -2.0
+    let x_max = 1.0
+    let y_min = -1.0
+    let y_max = 1.0
+    let width = 80
+    let height = 40
+    
+    let dx = (x_max - x_min) / width
+    let dy = (y_max - y_min) / height
+    
+    let py = 0
+    mientras py < height {
+        let cy = y_min + py * dy
+        let x = 0
+        let linea = ""
+        
+        mientras x < width {
+            let cx = x_min + x * dx
+            let zx = 0.0
+            let zy = 0.0
+            let iter = 0
+            
+            mientras iter < max_iter {
+                let zx2 = zx * zx
+                let zy2 = zy * zy
+                
+                si (zx2 + zy2) > 4.0 {
+                    romper
+                }
+                
+                zy = 2.0 * zx * zy + cy
+                zx = zx2 - zy2 + cx
+                iter = iter + 1
+            }
+            
+            si iter == max_iter {
+                linea = linea + "#"
+            } sino {
+                linea = linea + " "
+            }
+            
+            x = x + 1
+        }
+        imprimir linea
+        py = py + 1
+    }
+}
+
+let inicio = reloj()
+mandelbrot(1000)
+imprimir "Tiempo Mandelbrot:"
+imprimir (reloj() - inicio)

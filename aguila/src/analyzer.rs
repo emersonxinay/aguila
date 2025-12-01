@@ -1,4 +1,4 @@
-use crate::ast::{Programa, Sentencia, Expresion};
+use crate::ast::{Expresion, Literal, Programa, Sentencia};
 use std::collections::{HashMap, HashSet};
 
 pub struct Analizador {
@@ -48,47 +48,45 @@ impl Analizador {
 
     fn analizar_sentencia(&mut self, sentencia: &Sentencia) {
         match sentencia {
-            Sentencia::Asignacion { nombre, valor, tipo } => {
+            Sentencia::Asignacion {
+                objetivo, valor, ..
+            } => {
                 self.analizar_expresion(valor);
-                self.declarar_variable(nombre.clone());
-
-                if let Some(tipo_declarado) = tipo {
-                    match valor {
-                        Expresion::Numero(_) if tipo_declarado != "Numero" => {
-                            self.errores.push(format!("Error: Tipo incorrecto para variable '{}'. Se esperaba '{}', se encontró 'Numero'", nombre, tipo_declarado));
-                        }
-                        Expresion::Texto(_) if tipo_declarado != "Texto" => {
-                            self.errores.push(format!("Error: Tipo incorrecto para variable '{}'. Se esperaba '{}', se encontró 'Texto'", nombre, tipo_declarado));
-                        }
-                        Expresion::Logico(_) if tipo_declarado != "Logico" => {
-                            self.errores.push(format!("Error: Tipo incorrecto para variable '{}'. Se esperaba '{}', se encontró 'Logico'", nombre, tipo_declarado));
-                        }
-                        _ => {} // Otros casos o expresiones complejas (por ahora ignorados)
-                    }
+                if let Expresion::Identificador(nombre) = objetivo {
+                    self.declarar_variable(nombre.clone());
                 }
             }
-            Sentencia::Funcion { nombre, parametros, bloque, .. } => {
+            Sentencia::Funcion {
+                nombre,
+                params,
+                cuerpo,
+                ..
+            } => {
                 self.declarar_variable(nombre.clone());
-                self.funciones.insert(nombre.clone(), parametros.len());
-                
+                self.funciones.insert(nombre.clone(), params.len());
+
                 self.entrar_scope();
-                for (param, _) in parametros {
-                    self.declarar_variable(param.clone());
+                for param in params {
+                    self.declarar_variable(param.nombre.clone());
                 }
-                for sent in bloque {
+                for sent in cuerpo {
                     self.analizar_sentencia(sent);
                 }
                 self.salir_scope();
             }
-            Sentencia::Si { condicion, si_bloque, sino_bloque } => {
+            Sentencia::Si {
+                condicion,
+                entonces,
+                sino,
+            } => {
                 self.analizar_expresion(condicion);
                 self.entrar_scope();
-                for sent in si_bloque {
+                for sent in entonces {
                     self.analizar_sentencia(sent);
                 }
                 self.salir_scope();
-                
-                if let Some(bloque) = sino_bloque {
+
+                if let Some(bloque) = sino {
                     self.entrar_scope();
                     for sent in bloque {
                         self.analizar_sentencia(sent);
@@ -96,21 +94,23 @@ impl Analizador {
                     self.salir_scope();
                 }
             }
-            Sentencia::Mientras { condicion, bloque } => {
+            Sentencia::Mientras { condicion, cuerpo } => {
                 self.analizar_expresion(condicion);
                 self.entrar_scope();
-                for sent in bloque {
+                for sent in cuerpo {
                     self.analizar_sentencia(sent);
                 }
                 self.salir_scope();
             }
-            Sentencia::Imprimir(expr) => {
-                self.analizar_expresion(expr);
+            Sentencia::Imprimir(exprs) => {
+                for expr in exprs {
+                    self.analizar_expresion(expr);
+                }
             }
             Sentencia::Expresion(expr) => {
                 self.analizar_expresion(expr);
             }
-            Sentencia::Retorno(expr_opt) => {
+            Sentencia::Retornar(expr_opt) => {
                 if let Some(expr) = expr_opt {
                     self.analizar_expresion(expr);
                 }
@@ -123,28 +123,35 @@ impl Analizador {
         match expr {
             Expresion::Identificador(nombre) => {
                 if !self.variable_definida(nombre) {
-                    self.errores.push(format!("Error: Variable '{}' no definida", nombre));
+                    self.errores
+                        .push(format!("Error: Variable '{}' no definida", nombre));
                 }
             }
-            Expresion::Llamada { nombre, args } => {
-                if !self.variable_definida(nombre) {
-                     self.errores.push(format!("Error: Función '{}' no definida", nombre));
-                } else if let Some(&aridad) = self.funciones.get(nombre) {
-                    if args.len() != aridad {
-                        self.errores.push(format!(
-                            "Error: Función '{}' espera {} argumentos, pero se recibieron {}",
-                            nombre, aridad, args.len()
-                        ));
+            Expresion::Llamada { func, args } => {
+                if let Expresion::Identificador(nombre) = &**func {
+                    if !self.variable_definida(nombre) {
+                        // Podría ser nativa, así que no marcamos error estricto si no está en funciones map
+                        // Pero si está en funciones map, verificamos aridad
+                        if let Some(&aridad) = self.funciones.get(nombre) {
+                            if args.len() != aridad {
+                                self.errores.push(format!(
+                                    "Error: Función '{}' espera {} argumentos, pero se recibieron {}",
+                                    nombre, aridad, args.len()
+                                ));
+                            }
+                        }
                     }
                 }
+                self.analizar_expresion(func);
                 for arg in args {
                     self.analizar_expresion(arg);
                 }
             }
-            Expresion::BinOp { izq, der, .. } => {
+            Expresion::Binaria { izq, der, .. } => {
                 self.analizar_expresion(izq);
                 self.analizar_expresion(der);
             }
+            Expresion::Literal(_) => {}
             _ => {}
         }
     }

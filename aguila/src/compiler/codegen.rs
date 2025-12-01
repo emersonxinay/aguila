@@ -1,5 +1,6 @@
+#![allow(dead_code)]
+use crate::ast::{Expresion, Literal, OperadorBinario, OperadorUnario, Programa, Sentencia};
 use std::collections::HashSet;
-use crate::ast::{Programa, Sentencia, Expresion};
 
 #[derive(PartialEq)]
 enum TipoScope {
@@ -76,7 +77,7 @@ const imprimir = console.log;
                 // Si la encontramos, verificamos si cruzamos una barrera de función
                 // Si estamos en el mismo contexto de función (o global), la reutilizamos.
                 // Si la variable viene de una función superior o global, y estamos en una función, la sombreamos (Python-like).
-                return false; 
+                return false;
             }
             // Si encontramos un límite de función y no hemos encontrado la variable,
             // entonces cualquier variable encontrada más arriba será "externa",
@@ -91,102 +92,139 @@ const imprimir = console.log;
 
     fn generar_sentencia(&mut self, sentencia: Sentencia) {
         match sentencia {
-            Sentencia::Importar { ruta, alias } => {
-                let ruta_js = ruta.replace(".ag", ".js");
+            Sentencia::Importar { modulo, alias } => {
+                let ruta_js = modulo.replace(".ag", ".js");
                 if let Some(nombre) = alias {
-                    self.codigo.push_str(&format!("const {} = require(\"{}\");\n", nombre, ruta_js));
-                    // No exportamos lo importado por defecto, pero sí lo registramos en el scope actual
-                    self.declarar_variable(nombre); 
-                    // Nota: declarar_variable lo agregará a exportaciones si es global. 
-                    // Tal vez no queremos re-exportar importaciones? 
-                    // Por simplicidad en MVP, dejemos que se re-exporte si es global.
+                    self.codigo
+                        .push_str(&format!("const {} = require(\"{}\");\n", nombre, ruta_js));
+                    self.declarar_variable(nombre);
                 } else {
-                    self.codigo.push_str(&format!("require(\"{}\");\n", ruta_js));
+                    self.codigo
+                        .push_str(&format!("require(\"{}\");\n", ruta_js));
                 }
             }
-            Sentencia::Imprimir(expr) => {
+            Sentencia::Imprimir(exprs) => {
                 self.codigo.push_str("console.log(");
-                self.generar_expresion(expr);
-                self.codigo.push_str(");\n");
-            }
-            Sentencia::Asignacion { nombre, valor, .. } => {
-                if self.debe_crear_variable(&nombre) {
-                    self.codigo.push_str("let ");
-                    self.declarar_variable(nombre.clone());
-                }
-                self.codigo.push_str(&nombre);
-                self.codigo.push_str(" = ");
-                self.generar_expresion(valor);
-                self.codigo.push_str(";\n");
-            }
-            Sentencia::Funcion { nombre, parametros, bloque, es_asincrona, .. } => {
-                self.declarar_variable(nombre.clone());
-                if es_asincrona {
-                    self.codigo.push_str("async ");
-                }
-                self.codigo.push_str(&format!("function {}(", nombre));
-                
-                self.entrar_scope(TipoScope::Funcion);
-                
-                for (i, (param, _)) in parametros.iter().enumerate() {
+                for (i, expr) in exprs.into_iter().enumerate() {
                     if i > 0 {
                         self.codigo.push_str(", ");
                     }
-                    self.codigo.push_str(param);
-                    self.declarar_variable(param.clone());
+                    self.generar_expresion(expr);
                 }
-                
+                self.codigo.push_str(");\n");
+            }
+            Sentencia::Asignacion {
+                objetivo, valor, ..
+            } => {
+                if let Expresion::Identificador(nombre) = &objetivo {
+                    if self.debe_crear_variable(nombre) {
+                        self.codigo.push_str("let ");
+                        self.declarar_variable(nombre.clone());
+                    }
+                    self.codigo.push_str(nombre);
+                    self.codigo.push_str(" = ");
+                    self.generar_expresion(valor);
+                    self.codigo.push_str(";\n");
+                } else {
+                    // Asignación compleja (indices, atributos)
+                    self.generar_expresion(objetivo);
+                    self.codigo.push_str(" = ");
+                    self.generar_expresion(valor);
+                    self.codigo.push_str(";\n");
+                }
+            }
+            Sentencia::Funcion {
+                nombre,
+                params,
+                cuerpo,
+                es_async,
+                ..
+            } => {
+                self.declarar_variable(nombre.clone());
+                if es_async {
+                    self.codigo.push_str("async ");
+                }
+                self.codigo.push_str(&format!("function {}(", nombre));
+
+                self.entrar_scope(TipoScope::Funcion);
+
+                for (i, param) in params.iter().enumerate() {
+                    if i > 0 {
+                        self.codigo.push_str(", ");
+                    }
+                    self.codigo.push_str(&param.nombre);
+                    self.declarar_variable(param.nombre.clone());
+                }
+
                 self.codigo.push_str(") {\n");
-                
-                for sent in bloque {
+
+                for sent in cuerpo {
                     self.generar_sentencia(sent);
                 }
-                
+
                 self.salir_scope();
                 self.codigo.push_str("}\n");
             }
-            Sentencia::Clase { nombre, padre, metodos, .. } => {
+            Sentencia::Clase {
+                nombre,
+                herencia,
+                cuerpo,
+                ..
+            } => {
                 self.declarar_variable(nombre.clone());
                 self.codigo.push_str(&format!("class {}", nombre));
-                if let Some(p) = padre {
-                    self.codigo.push_str(&format!(" extends {}", p));
+                if let Some(padre) = herencia.first() {
+                    self.codigo.push_str(&format!(" extends {}", padre));
                 }
                 self.codigo.push_str(" {\n");
 
                 self.entrar_scope(TipoScope::Bloque); // Scope de clase
 
-                for (metodo_nombre, params, cuerpo) in metodos {
-                    // Traducir "inicializar" a "constructor"
-                    let nombre_js = if metodo_nombre == "inicializar" || metodo_nombre == "constructor" {
-                        "constructor".to_string()
-                    } else {
-                        metodo_nombre
-                    };
+                for sent in cuerpo {
+                    // Solo procesamos funciones dentro de clases como métodos
+                    if let Sentencia::Funcion {
+                        nombre,
+                        params,
+                        cuerpo,
+                        es_async,
+                        ..
+                    } = sent
+                    {
+                        // Traducir "inicializar" a "constructor"
+                        let nombre_js = if nombre == "inicializar" || nombre == "constructor" {
+                            "constructor".to_string()
+                        } else {
+                            nombre
+                        };
 
-                    self.codigo.push_str(&format!("    {}(", nombre_js));
-                    
-                    self.entrar_scope(TipoScope::Funcion);
-                    for (i, (param, _)) in params.iter().enumerate() {
-                        if i > 0 {
-                            self.codigo.push_str(", ");
+                        if es_async {
+                            self.codigo.push_str("async ");
                         }
-                        self.codigo.push_str(param);
-                        self.declarar_variable(param.clone());
-                    }
-                    self.codigo.push_str(") {\n");
+                        self.codigo.push_str(&format!("    {}(", nombre_js));
 
-                    for sent in cuerpo {
-                        self.generar_sentencia(sent);
+                        self.entrar_scope(TipoScope::Funcion);
+                        for (i, param) in params.iter().enumerate() {
+                            if i > 0 {
+                                self.codigo.push_str(", ");
+                            }
+                            self.codigo.push_str(&param.nombre);
+                            self.declarar_variable(param.nombre.clone());
+                        }
+                        self.codigo.push_str(") {\n");
+
+                        for s in cuerpo {
+                            self.generar_sentencia(s);
+                        }
+
+                        self.salir_scope(); // Salir de metodo
+                        self.codigo.push_str("    }\n");
                     }
-                    
-                    self.salir_scope(); // Salir de metodo
-                    self.codigo.push_str("    }\n");
                 }
 
                 self.salir_scope(); // Salir de clase
                 self.codigo.push_str("}\n");
             }
-            Sentencia::Retorno(expr_opt) => {
+            Sentencia::Retornar(expr_opt) => {
                 self.codigo.push_str("return");
                 if let Some(expr) = expr_opt {
                     self.codigo.push(' ');
@@ -198,20 +236,24 @@ const imprimir = console.log;
                 self.generar_expresion(expr);
                 self.codigo.push_str(";\n");
             }
-            Sentencia::Si { condicion, si_bloque, sino_bloque } => {
+            Sentencia::Si {
+                condicion,
+                entonces,
+                sino,
+            } => {
                 self.codigo.push_str("if (");
                 self.generar_expresion(condicion);
                 self.codigo.push_str(") {\n");
-                
+
                 self.entrar_scope(TipoScope::Bloque);
-                for sent in si_bloque {
+                for sent in entonces {
                     self.generar_sentencia(sent);
                 }
                 self.salir_scope();
-                
+
                 self.codigo.push_str("}");
-                
-                if let Some(bloque) = sino_bloque {
+
+                if let Some(bloque) = sino {
                     self.codigo.push_str(" else {\n");
                     self.entrar_scope(TipoScope::Bloque);
                     for sent in bloque {
@@ -222,17 +264,17 @@ const imprimir = console.log;
                 }
                 self.codigo.push_str("\n");
             }
-            Sentencia::Mientras { condicion, bloque } => {
+            Sentencia::Mientras { condicion, cuerpo } => {
                 self.codigo.push_str("while (");
                 self.generar_expresion(condicion);
                 self.codigo.push_str(") {\n");
-                
+
                 self.entrar_scope(TipoScope::Bloque);
-                for sent in bloque {
+                for sent in cuerpo {
                     self.generar_sentencia(sent);
                 }
                 self.salir_scope();
-                
+
                 self.codigo.push_str("}\n");
             }
             _ => {
@@ -243,17 +285,17 @@ const imprimir = console.log;
 
     fn generar_expresion(&mut self, expr: Expresion) {
         match expr {
-            Expresion::Texto(s) => {
-                self.codigo.push('"');
-                self.codigo.push_str(&s);
-                self.codigo.push('"');
-            }
-            Expresion::Numero(n) => {
-                self.codigo.push_str(&n.to_string());
-            }
-            Expresion::Logico(b) => {
-                self.codigo.push_str(if b { "true" } else { "false" });
-            }
+            Expresion::Literal(lit) => match lit {
+                Literal::Texto(s) => {
+                    self.codigo.push('"');
+                    self.codigo.push_str(&s);
+                    self.codigo.push('"');
+                }
+                Literal::Entero(n) => self.codigo.push_str(&n.to_string()),
+                Literal::Decimal(n) => self.codigo.push_str(&n.to_string()),
+                Literal::Booleano(b) => self.codigo.push_str(if b { "true" } else { "false" }),
+                Literal::Nulo => self.codigo.push_str("null"),
+            },
             Expresion::Identificador(nombre) => {
                 self.codigo.push_str(&nombre);
             }
@@ -273,7 +315,9 @@ const imprimir = console.log;
                     if i > 0 {
                         self.codigo.push_str(",\n");
                     }
-                    self.codigo.push_str(&format!("\"{}\": ", clave));
+                    // Clave debe ser expresión, asumimos literal o identificador
+                    self.generar_expresion(clave);
+                    self.codigo.push_str(": ");
                     self.generar_expresion(valor);
                 }
                 self.codigo.push_str("\n}");
@@ -289,47 +333,32 @@ const imprimir = console.log;
                 self.codigo.push('.');
                 self.codigo.push_str(&atributo);
             }
-            Expresion::MetodoLlamada { objeto, metodo, args } => {
-                self.generar_expresion(*objeto);
-                self.codigo.push('.');
-                self.codigo.push_str(&metodo);
-                self.codigo.push('(');
-                for (i, arg) in args.into_iter().enumerate() {
-                    if i > 0 {
-                        self.codigo.push_str(", ");
-                    }
-                    self.generar_expresion(arg);
-                }
-                self.codigo.push(')');
-            }
-            Expresion::AsignacionAtributo { objeto, atributo, valor } => {
-                self.generar_expresion(*objeto);
-                self.codigo.push('.');
-                self.codigo.push_str(&atributo);
-                self.codigo.push_str(" = ");
-                self.generar_expresion(*valor);
-            }
-            Expresion::Instancia { clase, args } => {
-                self.codigo.push_str("new ");
-                self.codigo.push_str(&clase);
-                self.codigo.push('(');
-                for (i, arg) in args.into_iter().enumerate() {
-                    if i > 0 {
-                        self.codigo.push_str(", ");
-                    }
-                    self.generar_expresion(arg);
-                }
-                self.codigo.push(')');
-            }
-            Expresion::BinOp { izq, op, der } => {
+            Expresion::Binaria { izq, op, der } => {
                 self.codigo.push('(');
                 self.generar_expresion(*izq);
-                self.codigo.push_str(&format!(" {} ", op));
+                let op_str = match op {
+                    OperadorBinario::Suma => "+",
+                    OperadorBinario::Resta => "-",
+                    OperadorBinario::Multiplicacion => "*",
+                    OperadorBinario::Division => "/",
+                    OperadorBinario::Modulo => "%",
+                    OperadorBinario::Potencia => "**",
+                    OperadorBinario::Igual => "===",
+                    OperadorBinario::NoIgual => "!==",
+                    OperadorBinario::Menor => "<",
+                    OperadorBinario::Mayor => ">",
+                    OperadorBinario::MenorIgual => "<=",
+                    OperadorBinario::MayorIgual => ">=",
+                    OperadorBinario::Y => "&&",
+                    OperadorBinario::O => "||",
+                    _ => "+",
+                };
+                self.codigo.push_str(&format!(" {} ", op_str));
                 self.generar_expresion(*der);
                 self.codigo.push(')');
             }
-            Expresion::Llamada { nombre, args } => {
-                self.codigo.push_str(&nombre);
+            Expresion::Llamada { func, args } => {
+                self.generar_expresion(*func);
                 self.codigo.push('(');
                 for (i, arg) in args.into_iter().enumerate() {
                     if i > 0 {
@@ -342,47 +371,31 @@ const imprimir = console.log;
             Expresion::Interpolacion(partes) => {
                 self.codigo.push('`');
                 for parte in partes {
-                    match parte {
-                        Expresion::Texto(s) => self.codigo.push_str(&s),
-                        _ => {
-                            self.codigo.push_str("${");
-                            self.generar_expresion(parte);
-                            self.codigo.push('}');
-                        }
+                    if let Expresion::Literal(Literal::Texto(s)) = parte {
+                        self.codigo.push_str(&s);
+                    } else {
+                        self.codigo.push_str("${");
+                        self.generar_expresion(parte);
+                        self.codigo.push('}');
                     }
                 }
                 self.codigo.push('`');
             }
-            Expresion::Esperar(expr) => {
+            Expresion::Await(expr) => {
                 self.codigo.push_str("(await ");
                 self.generar_expresion(*expr);
                 self.codigo.push(')');
             }
-            Expresion::FuncionAnonima { parametros, bloque, es_asincrona } => {
-                if es_asincrona {
-                    self.codigo.push_str("async ");
-                }
-                self.codigo.push_str("function(");
-                for (i, param) in parametros.iter().enumerate() {
+            Expresion::Lambda { params, cuerpo } => {
+                self.codigo.push_str("(");
+                for (i, param) in params.iter().enumerate() {
                     if i > 0 {
                         self.codigo.push_str(", ");
                     }
                     self.codigo.push_str(param);
                 }
-                self.codigo.push_str(") {\n");
-                
-                self.entrar_scope(TipoScope::Funcion);
-                // Registrar parámetros en el scope
-                for param in &parametros {
-                    self.declarar_variable(param.clone());
-                }
-
-                for sent in bloque {
-                    self.generar_sentencia(sent);
-                }
-                
-                self.salir_scope();
-                self.codigo.push_str("}");
+                self.codigo.push_str(") => ");
+                self.generar_expresion(*cuerpo);
             }
             _ => {
                 self.codigo.push_str("null /* Expresión no soportada */");

@@ -77,9 +77,6 @@ impl Lexer {
                 self.avanzar();
             } else if car == '.' {
                 if !tiene_punto {
-                    // Solo consumir el punto si el siguiente carácter es un dígito
-                    // Esto permite que "10.metodo()" se parsee como Numero(10), Punto, Ident(metodo)
-                    // Y que "20.4.5" se parsee como Numero(20.4), Punto, Numero(5)
                     if let Some(siguiente) = self.car_siguiente() {
                         if siguiente.is_numeric() {
                             tiene_punto = true;
@@ -89,24 +86,21 @@ impl Lexer {
                         }
                     }
                 }
-                // Si ya tiene punto o el siguiente no es dígito, terminamos el número
                 break;
             } else {
                 break;
             }
         }
-        
-        // Parsear el número acumulado
+
         if let Ok(num) = numero.parse::<f64>() {
             Token::Numero(num)
         } else {
-            // Fallback por si acaso, aunque con la lógica anterior debería ser siempre válido
             Token::Numero(0.0)
         }
     }
 
     fn leer_texto(&mut self, delimitador: char) -> Token {
-        self.avanzar(); // omitir comilla
+        self.avanzar(); // omitir comilla inicial
         let mut texto = String::new();
         while let Some(car) = self.car_actual() {
             if car == delimitador {
@@ -122,6 +116,7 @@ impl Lexer {
                         'r' => texto.push('\r'),
                         '\\' => texto.push('\\'),
                         '"' => texto.push('"'),
+                        '\'' => texto.push('\''),
                         _ => {
                             texto.push('\\');
                             texto.push(siguiente);
@@ -137,17 +132,13 @@ impl Lexer {
         Token::Texto(texto)
     }
 
-    // Nueva función para leer texto interpolado
     fn leer_texto_interpolado(&mut self, delimitador: char) -> String {
-        // Asumimos que 'a' y el delimitador inicial ya fueron consumidos
         let mut texto = String::new();
         while let Some(car) = self.car_actual() {
             if car == delimitador {
                 self.avanzar();
                 break;
             }
-            // Aquí se añadiría la lógica para manejar las interpolaciones,
-            // por ejemplo, ${expresion}. Por ahora, se comporta como leer_texto.
             if car == '\\' {
                 self.avanzar();
                 if let Some(siguiente) = self.car_actual() {
@@ -193,13 +184,6 @@ impl Lexer {
                 self.omitir_resto_linea();
                 continue;
             }
-            
-            // Verificación anticipada de // para comentarios ELIMINADA para soportar división entera
-            // if self.car_actual() == Some('/') && self.car_siguiente() == Some('/') {
-            //     self.omitir_resto_linea();
-            //     continue;
-            // }
-
             break;
         }
 
@@ -230,7 +214,15 @@ impl Lexer {
                 self.avanzar();
                 if self.car_actual() == Some('*') {
                     self.avanzar();
-                    Token::Potencia
+                    if self.car_actual() == Some('=') {
+                        self.avanzar();
+                        Token::PotenciaIgual
+                    } else {
+                        Token::Potencia
+                    }
+                } else if self.car_actual() == Some('=') {
+                    self.avanzar();
+                    Token::PorIgual
                 } else {
                     Token::Por
                 }
@@ -239,14 +231,27 @@ impl Lexer {
                 self.avanzar();
                 if self.car_actual() == Some('/') {
                     self.avanzar();
-                    Token::DivEntera
+                    if self.car_actual() == Some('=') {
+                        self.avanzar();
+                        Token::DivEnteraIgual
+                    } else {
+                        Token::DivEntera
+                    }
+                } else if self.car_actual() == Some('=') {
+                    self.avanzar();
+                    Token::DivIgual
                 } else {
                     Token::Div
                 }
             }
             Some('%') => {
                 self.avanzar();
-                Token::Modulo
+                if self.car_actual() == Some('=') {
+                    self.avanzar();
+                    Token::ModuloIgual
+                } else {
+                    Token::Modulo
+                }
             }
             Some('(') => {
                 self.avanzar();
@@ -284,6 +289,30 @@ impl Lexer {
                 self.avanzar();
                 Token::DosPuntos
             }
+            Some(';') => {
+                self.avanzar();
+                Token::PuntoYComa
+            }
+            Some('@') => {
+                self.avanzar();
+                Token::Arroba
+            }
+            Some('&') => {
+                self.avanzar();
+                Token::Ampersand
+            }
+            Some('|') => {
+                self.avanzar();
+                Token::Barra
+            }
+            Some('^') => {
+                self.avanzar();
+                Token::Caret
+            }
+            Some('~') => {
+                self.avanzar();
+                Token::Tilde
+            }
             Some('=') => {
                 self.avanzar();
                 if self.car_actual() == Some('=') {
@@ -298,6 +327,9 @@ impl Lexer {
                 if self.car_actual() == Some('=') {
                     self.avanzar();
                     Token::MayorIgual
+                } else if self.car_actual() == Some('>') {
+                    self.avanzar();
+                    Token::ShiftDer
                 } else {
                     Token::Mayor
                 }
@@ -307,6 +339,9 @@ impl Lexer {
                 if self.car_actual() == Some('=') {
                     self.avanzar();
                     Token::MenorIgual
+                } else if self.car_actual() == Some('<') {
+                    self.avanzar();
+                    Token::ShiftIzq
                 } else {
                     Token::Menor
                 }
@@ -317,7 +352,9 @@ impl Lexer {
                     self.avanzar();
                     Token::NoIgual
                 } else {
-                    Token::No
+                    Token::Error(
+                        "Caracter '!' inesperado. Usar 'no' para negación lógica.".to_string(),
+                    )
                 }
             }
             Some('"') => self.leer_texto('"'),
@@ -325,48 +362,60 @@ impl Lexer {
             Some(car) if car.is_numeric() => self.leer_numero(),
             Some(car) if car.is_alphabetic() || car == '_' => {
                 let ident = self.leer_identificador();
-                if ident == "a" && self.car_actual() == Some('"') {
-                    self.avanzar(); // Consumir "
-                    let texto = self.leer_texto_interpolado('"');
+                if ident == "f"
+                    && (self.car_actual() == Some('"') || self.car_actual() == Some('\''))
+                {
+                    let delim = self.car_actual().unwrap();
+                    self.avanzar(); // Consumir comilla
+                    let texto = self.leer_texto_interpolado(delim);
                     Token::TextoInterpolado(texto)
                 } else {
                     match ident.as_str() {
-                        "funcion" => Token::Funcion,
                         "si" => Token::Si,
                         "sino" => Token::Sino,
                         "mientras" => Token::Mientras,
                         "para" => Token::Para,
                         "en" => Token::En,
-                        "hasta" => Token::Hasta,
+                        "romper" => Token::Romper,
+                        "continuar" => Token::Continuar,
+                        "retornar" => Token::Retornar,
+                        "funcion" => Token::Funcion,
                         "clase" => Token::Clase,
-                        "imprimir" => Token::Imprimir,
                         "verdadero" => Token::Verdadero,
                         "falso" => Token::Falso,
                         "nulo" => Token::Nulo,
-                        "importar" => Token::Importar,
-                        "retornar" => Token::Retornar,
-                        "intentar" => Token::Intentar,
-                        "capturar" => Token::Capturar,
-                        "nuevo" => Token::Nuevo,
-                        "asincrono" => Token::Asincrono,
-                        "esperar" => Token::Esperar,
-                        "segun" => Token::Segun,
-                        "caso" => Token::Caso,
-                        "defecto" => Token::Defecto,
-                        "romper" => Token::Romper,
-                        "continuar" => Token::Continuar,
                         "y" => Token::Y,
                         "o" => Token::O,
                         "no" => Token::No,
+                        "importar" => Token::Importar,
+                        "desde" => Token::Desde,
+                        "como" => Token::Como,
+                        "intentar" => Token::Intentar,
+                        "capturar" => Token::Capturar,
+                        "finalmente" => Token::Finalmente,
+                        "lanzar" => Token::Lanzar,
+                        "global" => Token::Global,
+                        "nolocal" => Token::NoLocal,
+                        "pasar" => Token::Pasar,
+                        "eliminar" => Token::Eliminar,
+                        "con" => Token::Con,
+                        "asincrono" => Token::Asincrono,
+                        "esperar" => Token::Esperar,
+                        "ceder" => Token::Ceder,
+                        "segun" => Token::Segun,
+                        "caso" => Token::Caso,
+                        "defecto" => Token::Defecto,
+                        "imprimir" => Token::Imprimir,
+                        "afirmar" => Token::Afirmar,
+                        "nuevo" => Token::Nuevo,
+                        "let" => Token::Let,
                         _ => Token::Identificador(ident),
                     }
                 }
             }
             Some(car) => {
-                panic!(
-                    "Error léxico en línea {}, columna {}: carácter '{}' inesperado",
-                    self.linea, self.columna, car
-                );
+                self.avanzar();
+                Token::Error(format!("Carácter inesperado: '{}'", car))
             }
         }
     }

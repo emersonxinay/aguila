@@ -1,0 +1,9 @@
+funcion fib(n) {
+    si n < 2 {
+        retornar n
+    }
+    retornar fib(n - 1) + fib(n - 2)
+}
+
+resultado = fib(30)
+imprimir resultado

@@ -1,9 +1,9 @@
-use rustyline::error::ReadlineError;
-use rustyline::DefaultEditor;
+use crate::ast::Sentencia;
+use crate::interpreter::Interprete;
 use crate::lexer::Lexer;
 use crate::parser::Parser;
-use crate::interpreter::Interprete;
-use crate::ast::{Sentencia, Expresion};
+use rustyline::error::ReadlineError;
+use rustyline::DefaultEditor;
 
 pub fn iniciar() {
     println!("🦅 ÁGUILA v{}", env!("CARGO_PKG_VERSION"));
@@ -31,7 +31,7 @@ pub fn iniciar() {
         match readline {
             Ok(linea) => {
                 let linea_trimmed = linea.trim();
-                
+
                 // Comandos especiales solo funcionan cuando no hay buffer
                 if buffer_multilinea.is_empty() {
                     match linea_trimmed {
@@ -164,7 +164,7 @@ fn ejecutar_linea(interprete: &mut Interprete, codigo: &str) {
             // Ejecutar el resto del programa (o todo si no había expresión al final)
             if !programa.sentencias.is_empty() {
                 match interprete.ejecutar(programa) {
-                    Ok(_) => {}, // Ignoramos el retorno normal de sentencias
+                    Ok(_) => {} // Ignoramos el retorno normal de sentencias
                     Err(e) => {
                         eprintln!("❌ Error: {}", e);
                         return;

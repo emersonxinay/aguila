@@ -1,0 +1,17 @@
+# Este es un comentario con hashtag
+imprimir("Test 1: Comentarios con #")
+
+# Los comentarios pueden estar en cualquier parte
+a = 5  # Este es un comentario inline (aunque técnicamente el # debe estar al inicio de línea)
+imprimir(a)
+
+# Múltiples comentarios
+# en líneas consecutivas
+# funcionan perfectamente
+
+imprimir("Test 2: Variable después de comentarios")
+b = 10
+imprimir(b)
+
+# Comentario final
+imprimir("¡Comentarios con # funcionan!")

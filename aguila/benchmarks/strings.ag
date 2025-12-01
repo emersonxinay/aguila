@@ -1,0 +1,21 @@
+# Benchmark: Asignación de Cadenas
+# Prueba de estrés de memoria (concatenación de strings)
+
+funcion stress_strings(n) {
+    let s = ""
+    let i = 0
+    mientras i < n {
+        s = s + "a"
+        i = i + 1
+    }
+    retornar s
+}
+
+let inicio = reloj()
+# Concatenar 20,000 veces
+let resultado = stress_strings(20000) 
+imprimir "Longitud final:"
+# No tenemos funcion len() aun en stdlib basica visible, asi que solo imprimimos un mensaje
+imprimir "Terminado"
+imprimir "Tiempo Strings:"
+imprimir (reloj() - inicio)
