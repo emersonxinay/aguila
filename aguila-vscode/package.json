@@ -2,7 +2,7 @@
     "name": "aguila-vscode",
     "displayName": "Aguila Language",
     "description": "Soporte para el lenguaje de programación Aguila",
-    "version": "2.6.0",
+    "version": "2.6.1",
     "publisher": "aguila-lang",
     "engines": {
         "vscode": "^1.70.0"
