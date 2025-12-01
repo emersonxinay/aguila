@@ -405,7 +405,7 @@ impl Lexer {
                         "segun" => Token::Segun,
                         "caso" => Token::Caso,
                         "defecto" => Token::Defecto,
-                        "imprimir" => Token::Imprimir,
+                        "imprime" | "imprimir" => Token::Imprimir,
                         "afirmar" => Token::Afirmar,
                         "nuevo" => Token::Nuevo,
                         "let" => Token::Let,

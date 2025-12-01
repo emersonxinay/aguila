@@ -1,0 +1,2 @@
+l = [1]
+l.agregar(2).agregar(3)

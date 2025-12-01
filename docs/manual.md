@@ -153,7 +153,7 @@ p.saludar()
 ## 📚 8. Biblioteca Estándar
 
 ### Funciones Globales
-*   **`imprimir(valor)`**: Muestra valor en consola.
+*   **`imprime(valor)`**: Muestra valor en consola (alias: `imprimir`).
 *   **`leer(mensaje)`**: Lee entrada del usuario.
 *   **`afirmar(condicion, msg)`**: Lanza error si la condición es falsa.
 *   **`reloj()`**: Devuelve tiempo actual en segundos.

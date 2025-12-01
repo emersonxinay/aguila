@@ -119,6 +119,13 @@
         "description": "Importar módulo"
     },
     "Imprimir": {
+        "prefix": "imprimir",
+        "body": [
+            "imprimir(\"$1\")"
+        ],
+        "description": "Imprime un valor en la consola (Alias)"
+    },
+    "Imprime": {
         "prefix": "imp",
         "body": "imprimir $0",
         "description": "Imprimir en consola"

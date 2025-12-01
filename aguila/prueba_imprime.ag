@@ -1,0 +1,9 @@
+imprimir("Esto usa imprimir (clásico)")
+imprime("Esto usa imprime (nuevo)")
+
+funcion test() {
+    imprime("Dentro de función con imprime")
+    imprimir("Dentro de función con imprimir")
+}
+
+test()
