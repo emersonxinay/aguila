@@ -24,7 +24,7 @@ run_test() {
     
     echo -n "[$TOTAL] Probando $name... "
     
-    if ./aguila/target/debug/aguila ejecutar "$file" > /dev/null 2>&1; then
+    if ./aguila/target/release/aguila ejecutar "$file" > /dev/null 2>&1; then
         echo -e "${GREEN}✓ PASS${NC}"
         PASSED=$((PASSED + 1))
     else
@@ -53,8 +53,7 @@ run_test "ejemplos/intermedio/programacion_orientada_objetos.ag" "POO"
 
 echo ""
 echo -e "${YELLOW}=== AVANZADOS ===${NC}"
-echo "⚠️  Saltando fibonacci.ag (JIT issue conocido con MAX_INLINE_DEPTH=10)"
-# run_test "ejemplos/avanzado/fibonacci.ag" "Fibonacci (JIT)"
+run_test "ejemplos/avanzado/fibonacci.ag" "Fibonacci (JIT)"
 run_test "ejemplos/avanzado/matematicas.ag" "Matemáticas"
 run_test "ejemplos/avanzado/biblioteca_estandar.ag" "Biblioteca Estándar"
 run_test "ejemplos/avanzado/modulos.ag" "Módulos"
