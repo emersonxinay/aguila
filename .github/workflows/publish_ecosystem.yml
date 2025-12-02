@@ -1,0 +1,75 @@
+name: Publish Ecosystem
+
+on:
+  repository_dispatch:
+    types: [release_triggered]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., v2.6.3)'
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+
+      - name: Extract Version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "repository_dispatch" ]; then
+            echo "VERSION=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Clean Version String
+        id: clean_version
+        run: |
+          RAW_VERSION=${{ steps.version.outputs.VERSION }}
+          CLEAN_VERSION=${RAW_VERSION#v}
+          echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update NPM Package Version
+        working-directory: ./npm
+        run: |
+          npm version ${{ steps.clean_version.outputs.CLEAN_VERSION }} --no-git-tag-version --allow-same-version
+
+      - name: Update VS Code Extension Version
+        working-directory: ./aguila-vscode
+        run: |
+          npm version ${{ steps.clean_version.outputs.CLEAN_VERSION }} --no-git-tag-version --allow-same-version
+
+      - name: Commit Version Updates
+        run: |
+          git add npm/package.json aguila-vscode/package.json
+          git commit -m "chore: Update ecosystem versions to ${{ steps.version.outputs.VERSION }}" || echo "No changes to commit"
+          git push
+
+      - name: Publish to NPM
+        working-directory: ./npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install VSCE
+        run: npm install -g @vscode/vsce
+
+      - name: Publish VS Code Extension
+        working-directory: ./aguila-vscode
+        run: vsce publish -p ${{ secrets.VSCE_PAT }} --no-dependencies
