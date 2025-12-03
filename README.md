@@ -40,7 +40,7 @@ Para la mejor experiencia, instala la extensión oficial en **Visual Studio Code
 
 ### 🎥 Instalación y Demo
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1-ud5QwsytQ?si=tj6ZTFQmB5AnQn3U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Instalación y Demo de Águila](https://img.youtube.com/vi/1-ud5QwsytQ/0.jpg)](https://www.youtube.com/watch?v=1-ud5QwsytQ)
 
 ---
 
