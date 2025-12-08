@@ -2,7 +2,7 @@
     "name": "aguila-vscode",
     "displayName": "Lenguaje Águila",
     "description": "Soporte para el lenguaje de programación Aguila",
-    "version": "2.6.8",
+    "version": "2.6.9",
     "publisher": "aguila-lang",
     "author": {
         "name": "Emerson Espinoza",
@@ -168,6 +168,20 @@
                                 "punctuation.section.embedded.begin.aguila",
                                 "punctuation.section.embedded.end.aguila"
                             ],
+                            "settings": {
+                                "foreground": "#FF5555",
+                                "fontStyle": "bold"
+                            }
+                        },
+                        {
+                            "scope": "storage.type.string.aguila",
+                            "settings": {
+                                "foreground": "#BD93F9",
+                                "fontStyle": "italic bold"
+                            }
+                        },
+                        {
+                            "scope": "variable.interpolated.aguila",
                             "settings": {
                                 "foreground": "#FF5555",
                                 "fontStyle": "bold"

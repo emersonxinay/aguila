@@ -74,7 +74,15 @@
         },
         "interpolated_strings": {
             "name": "string.quoted.double.interpolated.aguila",
-            "begin": "a\"",
+            "begin": "(a)(\")",
+            "beginCaptures": {
+                "1": {
+                    "name": "storage.type.string.aguila"
+                },
+                "2": {
+                    "name": "string.quoted.double.interpolated.aguila"
+                }
+            },
             "end": "\"",
             "patterns": [
                 {
@@ -95,6 +103,10 @@
                         }
                     },
                     "patterns": [
+                        {
+                            "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+                            "name": "variable.interpolated.aguila"
+                        },
                         {
                             "include": "$self"
                         }
