@@ -130,12 +130,12 @@ importar env
 importar telegram
 
 # Carga variables desde el archivo .env automáticamente
-gestor_env = env.GestorEnv()
+gestor_env = nuevo env.GestorEnv()
 gestor_env.configurar(".env")
 TOKEN = gestor_env.obtener("TELEGRAM_TOKEN")
 
 # Iniciar un bot es así de simple
-mi_bot = telegram.Bot()
+mi_bot = nuevo telegram.MotorBot()
 mi_bot.arrancar(TOKEN)
 ```
 
