@@ -6,6 +6,8 @@
 
 **Águila** es un lenguaje de programación moderno, diseñado para ser la herramienta definitiva para desarrolladores de habla hispana. A diferencia de lenguajes educativos, Águila es **profesional**, compilado y de alto rendimiento, listo para construir software real.
 
+🌐 **[Visita la Web Oficial: aguila.compilandocode.com](https://aguila.compilandocode.com)**
+
 [![NPM Version](https://img.shields.io/npm/v/aguila-lang)](https://www.npmjs.com/package/aguila-lang)
 [![VS Code Extension](https://img.shields.io/visual-studio-marketplace/v/aguila-lang.aguila-vscode)](https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -120,11 +122,28 @@ histograma = graficas.Histograma(
 histograma.guardar("ventas.png")
 ```
 
+### Bots de Telegram y .env (¡Nuevos!)
+Crea bots nativos con recarga en caliente de variables de entorno:
+
+```aguila
+importar env
+importar telegram
+
+# Carga variables desde el archivo .env automáticamente
+gestor_env = env.GestorEnv()
+gestor_env.configurar(".env")
+TOKEN = gestor_env.obtener("TELEGRAM_TOKEN")
+
+# Iniciar un bot es así de simple
+mi_bot = telegram.Bot()
+mi_bot.arrancar(TOKEN)
+```
+
 ---
 
 ## 🆚 Comparativa: Python vs Águila
 
-El mismo poder, en tu idioma.
+El mismo poder, en Español.
 
 | Característica | Python | Águila |
 | :--- | :--- | :--- |
