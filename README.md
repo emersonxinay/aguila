@@ -14,6 +14,14 @@
 
 ---
 
+## 🚀 Novedades en v2.8.0
+- **Interpolación con Formato Nativo:** ¡Formatea números dinámicamente usando sintaxis estilo Python! (Ej: `a"Tiempo: {var:.3f}s"`).
+- **Redondeo Preciso:** Nueva función `mate.redondear(numero, decimales)` en la librería estándar.
+- **Errores Accesibles:** Sistema de errores 100% en texto plano, optimizado para lectores de pantalla y herramientas de accesibilidad.
+- **Rendimiento Máximo:** Conectado directamente a nuestra capa de compilación nativa para tiempos de ejecución récord.
+
+---
+
 ## 💡 ¿Por qué Águila?
 
 Águila rompe la barrera del idioma sin sacrificar potencia. Es la fusión perfecta entre la **simplicidad de Python** y la **velocidad de Rust**.
@@ -54,7 +62,7 @@ Para la mejor experiencia, instala la extensión oficial en **Visual Studio Code
 ```aguila
 # Inferencia de tipos (Dinámico)
 nombre = "Águila"
-version = 2.7.6
+version = 2.8.0
 
 # Tipado Estático (Opcional)
 contador: Numero = 0
