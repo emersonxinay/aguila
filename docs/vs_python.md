@@ -1,4 +1,4 @@
-# 🦅 Águila vs Python: 10 Ejercicios Comparativos
+#  Águila vs Python: 10 Ejercicios Comparativos
 
 > **Águila es más simple que Python** - Misma expresividad, menos complejidad
 
@@ -295,7 +295,7 @@ imprimir lista
 
 ---
 
-## 📊 Comparación General
+##  Comparación General
 
 | Característica | Python | Águila |
 |---|---|---|
@@ -308,7 +308,7 @@ imprimir lista
 
 ---
 
-## 🎯 Conclusión
+##  Conclusión
 
 **Águila es más simple porque:**
 

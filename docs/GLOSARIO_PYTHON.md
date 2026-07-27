@@ -1,10 +1,10 @@
-# Glosario y Comparativa: Águila vs Python 🦅🐍
+# Glosario y Comparativa: Águila vs Python 
 
 Este documento sirve como guía rápida para desarrolladores que vienen de Python. Águila comparte mucha filosofía con Python, pero con sintaxis traducida al español y algunas diferencias clave.
 
 ## Palabras Clave (Keywords)
 
-| Águila 🦅 | Python 🐍 | Descripción |
+| Águila  | Python  | Descripción |
 | :--- | :--- | :--- |
 | `funcion` / `fn` | `def` | Definición de función. |
 | `retornar` | `return` | Retorno de valor. |

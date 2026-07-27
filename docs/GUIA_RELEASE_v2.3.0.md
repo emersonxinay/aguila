@@ -1,6 +1,6 @@
 # Guía de Lanzamiento: Águila v2.3.0
 
-## 📋 Checklist Pre-Release
+##  Checklist Pre-Release
 
 - [x] Compilar binario en modo release
 - [x] Actualizar versión en `Cargo.toml` (2.3.0)
@@ -14,7 +14,7 @@
 
 ---
 
-## 🔨 Paso 1: Compilar Binarios
+##  Paso 1: Compilar Binarios
 
 ### macOS (Apple Silicon)
 ```bash
@@ -46,7 +46,7 @@ copy target\release\aguila.exe ..\binarios\aguila-windows-x64-v2.3.0.exe
 
 ---
 
-## 📝 Paso 2: Crear Tag y Commit
+##  Paso 2: Crear Tag y Commit
 
 ```bash
 # Commit final
@@ -62,7 +62,7 @@ git push origin main --tags
 
 ---
 
-## 🚀 Paso 3: Crear GitHub Release
+##  Paso 3: Crear GitHub Release
 
 ### Título del Release
 ```
@@ -72,9 +72,9 @@ v2.3.0 - Asignación a Índices + Métodos Optimizados
 ### Descripción (Copiar en GitHub)
 
 ```markdown
-## 🦅 Águila v2.3.0
+##  Águila v2.3.0
 
-### 🚀 Nuevas Características
+###  Nuevas Características
 
 #### 1️⃣ Asignación a Índices
 ¡La característica más esperada! Ahora puedes modificar listas y diccionarios directamente:
@@ -120,7 +120,7 @@ mayor = numeros.maximo()    # 9
 
 ---
 
-### 📊 Comparación con Python
+###  Comparación con Python
 
 **Python:**
 ```python
@@ -138,7 +138,7 @@ imprimir numeros.minimo()
 
 ---
 
-### 📦 Instalación
+###  Instalación
 
 #### NPM (Recomendado)
 ```bash
@@ -166,7 +166,7 @@ code --install-extension aguila-lang.aguila-vscode
 
 ---
 
-### 🎯 Ejemplos Nuevos
+###  Ejemplos Nuevos
 
 - **N-Reinas completo:** `aguila/ejemplos/n_reinas.ag`
 - **Métodos nativos:** `aguila/ejemplos/test_metodos.ag`
@@ -174,7 +174,7 @@ code --install-extension aguila-lang.aguila-vscode
 
 ---
 
-### 🔧 Mejoras Técnicas
+###  Mejoras Técnicas
 
 - **Performance:** Asignación O(1) a listas y diccionarios
 - **Sintaxis:** Más concisa que Python
@@ -182,7 +182,7 @@ code --install-extension aguila-lang.aguila-vscode
 
 ---
 
-### 📚 Recursos
+###  Recursos
 
 - [Tutorial Completo](TUTORIAL.md)
 - [Comparación con Python](AGUILA_VS_PYTHON.md)
@@ -193,7 +193,7 @@ code --install-extension aguila-lang.aguila-vscode
 
 **Hecho con ❤️ para la comunidad hispanohablante**
 
-🦅 Águila - Programación en español, velocidad de Rust
+ Águila - Programación en español, velocidad de Rust
 ```
 
 ### Adjuntar Binarios
@@ -211,7 +211,7 @@ code --install-extension aguila-lang.aguila-vscode
 
 ---
 
-## 📦 Paso 4: Publicar en NPM
+##  Paso 4: Publicar en NPM
 
 ```bash
 cd npm
@@ -225,7 +225,7 @@ npm info aguila-lang
 
 ---
 
-## 🎨 Paso 5: Publicar Extensión VS Code
+##  Paso 5: Publicar Extensión VS Code
 
 ```bash
 cd aguila-vscode
@@ -249,17 +249,17 @@ https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode
 
 ---
 
-## 🎉 Paso 7: Anuncio
+##  Paso 7: Anuncio
 
 ### Twitter/X
 ```
-🦅 Águila v2.3.0 ya está disponible!
+ Águila v2.3.0 ya está disponible!
 
 ✨ Asignación a índices (lista[i] = valor)
 ✨ Palabra clave 'romper' (break)
 ✨ Métodos .suma(), .minimo(), .maximo()
 
-Ahora más simple que Python 🐍
+Ahora más simple que Python 
 
 npm install -g aguila-lang@2.3.0
 
@@ -282,4 +282,4 @@ GitHub: https://github.com/emersonxinay/aguila
 
 ---
 
-**¡Listo para lanzar! 🚀**
+**¡Listo para lanzar! **

@@ -1,4 +1,4 @@
-# 🦅 Guía Maestra: Tu Primera App Fullstack (Sin Errores)
+#  Guía Maestra: Tu Primera App Fullstack (Sin Errores)
 
 Esta es la guía definitiva para construir una aplicación real con Águila. Está diseñada para que te salga **perfecta a la primera**, incluso si empiezas desde cero.
 
@@ -13,7 +13,7 @@ Asegúrate de tener esto instalado en tu computadora:
 
 ---
 
-## 🏗️ Paso 1: Crear el Backend
+## ️ Paso 1: Crear el Backend
 
 Abre tu terminal y ejecuta estos comandos uno por uno:
 
@@ -34,7 +34,7 @@ aguila instalar nido
 
 ---
 
-## 💾 Paso 2: La Base de Datos
+##  Paso 2: La Base de Datos
 
 Necesitamos una base de datos vacía para guardar los productos.
 
@@ -85,7 +85,7 @@ aguila migrar
 
 ---
 
-## 🔒 Paso 4: Seguridad (Autenticación)
+##  Paso 4: Seguridad (Autenticación)
 
 Vamos a crear un sistema de Login.
 1.  Crea un archivo nuevo llamado `controladores/AuthControlador.ag`.
@@ -111,7 +111,7 @@ clase AuthControlador {
 
 ---
 
-## 🚀 Paso 5: El Cerebro (Main.ag)
+##  Paso 5: El Cerebro (Main.ag)
 
 Este es el archivo principal. Vamos a conectarlo todo.
 Abre `main.ag` y REEMPLAZA todo su contenido por esto:
@@ -183,8 +183,8 @@ app.post("/api/productos", prod.crear, {
 # ==========================================
 # 5. DESPEGAR
 # ==========================================
-imprimir("🦅 Servidor volando en http://localhost:8080")
-imprimir("📜 Documentación API: http://localhost:8081/docs")
+imprimir(" Servidor volando en http://localhost:8080")
+imprimir(" Documentación API: http://localhost:8081/docs")
 
 app.escuchar(8080, app.rutas)
 ```
@@ -288,11 +288,11 @@ function App() {
   
   return (
     <div className="container">
-      <h1>🦅 Tienda Águila</h1>
+      <h1> Tienda Águila</h1>
       
       <div style={{marginBottom: '20px', padding: '10px', background: '#f0f0f0', borderRadius: '8px'}}>
           {!token ? (
-              <button onClick={login}>🔑 Login Admin</button>
+              <button onClick={login}> Login Admin</button>
           ) : (
               <span style={{color: 'green', fontWeight: 'bold'}}>✅ Sesión Iniciada</span>
           )}
@@ -302,7 +302,7 @@ function App() {
         <input placeholder="Producto" value={nombre} onChange={e => setNombre(e.target.value)} required />
         <input placeholder="Precio" type="number" value={precio} onChange={e => setPrecio(e.target.value)} required />
         <button type="submit" disabled={!token}>
-            {token ? "Guardar" : "🔒 Login Requerido"}
+            {token ? "Guardar" : " Login Requerido"}
         </button>
       </form>
 
@@ -328,13 +328,13 @@ npm run dev
 
 ---
 
-## 🎉 ¡Misión Cumplida!
+##  ¡Misión Cumplida!
 
 Abre el link que te muestra la terminal (usualmente `http://localhost:5173`).
 
 1.  Verás la lista vacía.
 2.  Intenta crear un producto -> **No te dejará**.
-3.  Dale click a **🔑 Login**.
+3.  Dale click a ** Login**.
 4.  Intenta crear un producto -> **¡Funciona!**
 
 Has creado una aplicación Fullstack con **Águila** (Backend), **Nido** (Framework), **Postgres** (DB) y **React** (Frontend).

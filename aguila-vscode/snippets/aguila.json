@@ -1,8 +1,8 @@
 {
     "Función": {
-        "prefix": "fun",
+        "prefix": "fn",
         "body": [
-            "funcion ${1:nombre}(${2:parametros}) {",
+            "fn ${1:nombre}(${2:parametros}) {",
             "\t$0",
             "}"
         ],
@@ -127,7 +127,7 @@
     },
     "Imprime": {
         "prefix": "imp",
-        "body": "imprimir $0",
+        "body": "imprimir($0)",
         "description": "Imprimir en consola"
     },
     "Afirmar": {

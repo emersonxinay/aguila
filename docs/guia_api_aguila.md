@@ -1,10 +1,10 @@
-# Guía Maestra de Desarrollo Backend con Águila 🦅
+# Guía Maestra de Desarrollo Backend con Águila 
 
 Esta documentación detalla las capacidades del lenguaje Águila para el desarrollo de APIs robustas y escalables, utilizando el framework nativo **Nido**.
 
 ---
 
-## 📑 Tabla de Contenidos
+##  Tabla de Contenidos
 1.  [Prerrequisitos (DB)](file:///Users/emersonespinoza/Documents/proyectos/proyecto_nuevo_lenguaje/docs/guia_api_aguila.md#L11)
 2.  [Inicio Rápido (CLI & Generadores)](file:///Users/emersonespinoza/Documents/proyectos/proyecto_nuevo_lenguaje/docs/guia_api_aguila.md#L23)
 3.  [Relaciones (Foreign Keys)](file:///Users/emersonespinoza/Documents/proyectos/proyecto_nuevo_lenguaje/docs/guia_api_aguila.md#L37)
@@ -20,11 +20,11 @@ Esta documentación detalla las capacidades del lenguaje Águila para el desarro
 
 ---
 
-## 🏗 Arquitectura del Framework (Nido)
+##  Arquitectura del Framework (Nido)
 
 Nido es el framework web por defecto de Águila, inspirado en Express.js y NestJS. Proporciona una estructura clara para enrutamiento, controladores, modelos y middleware.
 
-### 🛠 Prerrequisitos (Base de Datos)
+###  Prerrequisitos (Base de Datos)
 
 ⚠️ **Importante:** Águila se conecta a una base de datos PostgreSQL existente. **No instala PostgreSQL ni crea la base de datos principal.**
 
@@ -50,7 +50,7 @@ Imagina que quieres crear un recurso `Usuario` con nombre, email único y edad.
 aguila crear api Usuario nombre:Texto email:Texto:unico edad:Entero
 ```
 
-### 🔗 Relaciones entre Tablas (Foreign Keys)
+###  Relaciones entre Tablas (Foreign Keys)
 
 Puedes definir relaciones (Foreign Keys) directamente en el comando CLI usando la opción `ref:Modelo`.
 
@@ -129,7 +129,7 @@ clase UsuarioControlador {
 }
 ```
 
-### 🏃‍♂️ Cómo hacerlo funcionar ("Zero Config")
+### ‍♂️ Cómo hacerlo funcionar ("Zero Config")
 
 Una vez generados los archivos, solo necesitas 2 pasos para tener tu API funcionando:
 
@@ -174,7 +174,7 @@ app.escuchar(3000, app.rutas)
 
 ---
 
-## 🚀 Conceptos Core
+##  Conceptos Core
 
 ### 1. Servidor y Enrutamiento (`App`)
 La clase `App` inicializa el servidor y gestiona las rutas.
@@ -261,7 +261,7 @@ fn auth_middleware(req, res) {
 
 ---
 
-## 🧠 Desafíos de Ingeniería (Google Style en Águila)
+##  Desafíos de Ingeniería (Google Style en Águila)
 
 A continuación, 5 problemas de entrevista técnica resueltos utilizando Águila, demostrando su capacidad para lógica algorítmica y estructuras de datos.
 
@@ -482,7 +482,7 @@ fn top_k_ips(logs, k) {
 
 ---
 
-## 🛡 Seguridad y Estabilidad
+##  Seguridad y Estabilidad
 - **Try/Catch Global:** Águila soporta `intentar/capturar` para evitar caídas del servidor.
 - **Validación de Tipos:** Conversión explícita con `entero()`, `decimal()`, `texto()` para seguridad en BD.
 - **Inyección de Dependencias:** El objeto `db` se inyecta en cada request, facilitando tests y transacciones.
@@ -491,11 +491,11 @@ Esta guía cubre desde la arquitectura básica hasta la resolución de problemas
 
 ---
 
-## 🆚 Águila (Nido) vs FastAPI
+##  Águila (Nido) vs FastAPI
 
 Una comparación honesta entre el desarrollo con Águila y el estándar de industria actual (Python/FastAPI).
 
-| Característica | Águila (Nido) 🦅 | FastAPI (Python) 🐍 |
+| Característica | Águila (Nido)  | FastAPI (Python)  |
 | :--- | :--- | :--- |
 | **Filosofía** | **"Baterías Incluidas" (Rails-like).** CLI nativo genera Modelos, Controladores y SQL. Estructura opinionada. | **Microframework.** Tú decides la estructura de carpetas, ORM y validadores. Flexible pero requiere configuración. |
 | **Sintaxis** | **Español Nativo.** `mientras`, `si`, `fn`. Ideal para educación y equipos hispanohablantes. | **Inglés / Python Standard.** Universal, pero barrera de entrada para no angloparlantes. |
@@ -505,11 +505,11 @@ Una comparación honesta entre el desarrollo con Águila y el estándar de indus
 | **Uso Ideal** | Startups rápidas, Educación, Proyectos donde el **Español** es clave. | Sistemas complejos de Enterprise, ML/AI, Integraciones masivas. |
 
 **Conclusión:**
-Águila busca la productividad inmediata de herramientas como **Ruby on Rails** o **NestJS** (generadores de código), con la simplicidad de sintaxis de Python, pero en tu idioma. FastAPI es excelente, pero Águila te permite decir: *"¡Mira mamá, programo en español y funciona!"* 🚀
+Águila busca la productividad inmediata de herramientas como **Ruby on Rails** o **NestJS** (generadores de código), con la simplicidad de sintaxis de Python, pero en Español. FastAPI es excelente, pero Águila te permite decir: *"¡Mira mamá, programo en español y funciona!"* 
 
 ---
 
-## 🚀 Roadmap: El Camino para Superar a FastAPI
+##  Roadmap: El Camino para Superar a FastAPI
 
 Para que Águila no solo compita, sino que **supere** a herramientas como FastAPI, el lenguaje debe evolucionar en las siguientes áreas clave. Este es el plan de ingeniería para el futuro de Nido:
 

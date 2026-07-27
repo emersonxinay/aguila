@@ -14,11 +14,12 @@
 
 ---
 
-## 🚀 Novedades en v2.8.0
-- **Interpolación con Formato Nativo:** ¡Formatea números dinámicamente usando sintaxis estilo Python! (Ej: `a"Tiempo: {var:.3f}s"`).
-- **Redondeo Preciso:** Nueva función `mate.redondear(numero, decimales)` en la librería estándar.
-- **Errores Accesibles:** Sistema de errores 100% en texto plano, optimizado para lectores de pantalla y herramientas de accesibilidad.
-- **Rendimiento Máximo:** Conectado directamente a nuestra capa de compilación nativa para tiempos de ejecución récord.
+## 🚀 Novedades en v2.8.1
+- **Programación Orientada a Objetos Profesional:** Soporte completo para encapsulamiento con modificadores de visibilidad explícitos (`publico`, `privado`, `protegido`) e implícitos (convenciones `_` y `__`).
+- **Lambdas (Funciones Anónimas):** ¡Escribe funciones de una sola línea al instante! (Ej: `sumar = lambda a, b: a + b`).
+- **Listas por Comprensión:** Crea y filtra listas de forma elegante y veloz estilo Python (Ej: `pares = [x para x en lista si x % 2 == 0]`).
+- **Resolución de Ámbito Mejorada:** Integración nativa y veloz de la palabra clave `yo` (`self`) en toda la Máquina Virtual.
+- **Todo lo de v2.8.0:** Interpolación nativa (`a"Hola {x}"`), `mate.redondear`, y sistema de errores 100% accesibles.
 
 ---
 

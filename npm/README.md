@@ -4,6 +4,9 @@ Instalador oficial del lenguaje de programación **ÁGUILA** para Node.js.
 
 > **"Lo mismo que Python, pero más veloz y en Español."**
 
+📚 **[LEER LA DOCUMENTACIÓN OFICIAL AQUÍ](https://aguila.compilandocode.com/biblioteca)**  
+Visita nuestra página web oficial para aprender la lógica que mueve al mundo, con guías interactivas, ejemplos y la referencia completa de la API.
+
 ## 🚀 Instalación
 
 ```bash
@@ -40,9 +43,9 @@ Este paquete instala el binario nativo de Águila (escrito en Rust), que incluye
 
 ## 🔗 Enlaces
 
-- [Repositorio en GitHub](https://github.com/emersonxinay/aguila)
-- [Documentación](https://github.com/emersonxinay/aguila#readme)
-- [Extensión de VS Code](https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode)
+- 🌐 [Página Web y Documentación Oficial](https://aguila.compilandocode.com/biblioteca)
+- 🐙 [Repositorio en GitHub](https://github.com/emersonxinay/aguila)
+- 💻 [Extensión de VS Code](https://marketplace.visualstudio.com/items?itemName=aguila-lang.aguila-vscode)
 
 ---
 MIT © 2025 Emerson Espinoza

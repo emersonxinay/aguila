@@ -1,10 +1,10 @@
-# 🦅 Tutorial Completo de Águila: De Cero a Experto
+#  Tutorial Completo de Águila: De Cero a Experto
 
 > **Proyecto Real:** Sistema de Biblioteca - Aprende Águila construyendo una aplicación completa de gestión de libros y préstamos.
 
 ---
 
-## 📚 Índice
+##  Índice
 
 1. [Introducción y Configuración](#1-introducción-y-configuración)
 2. [Variables y Tipos de Datos](#2-variables-y-tipos-de-datos)
@@ -36,7 +36,7 @@ npm install -g aguila-lang
 Crea un archivo `hola.ag`:
 
 ```aguila
-imprimir("¡Bienvenido a Águila! 🦅")
+imprimir("¡Bienvenido a Águila! ")
 ```
 
 Ejecútalo:
@@ -95,7 +95,7 @@ imprimir(titulo + " tiene " + paginas + " páginas")
 | `Diccionario` | Pares clave-valor | `{"nombre": "Ana"}` |
 | `Nulo` | Ausencia de valor | `nulo` |
 
-### 🎯 Ejercicio 1: Variables de Biblioteca
+###  Ejercicio 1: Variables de Biblioteca
 
 Crea un archivo `ejercicio1.ag`:
 
@@ -172,7 +172,7 @@ imprimir(mensaje)
 # Salida: Hola Carlos, tienes 3 libros prestados
 ```
 
-### 🎯 Ejercicio 2: Calculadora de Multas
+###  Ejercicio 2: Calculadora de Multas
 
 ```aguila
 # ejercicio2.ag
@@ -235,13 +235,13 @@ categoria = 2
 
 segun categoria {
     caso 1 {
-        imprimir("📚 Ficción")
+        imprimir(" Ficción")
     }
     caso 2 {
-        imprimir("📖 No Ficción")
+        imprimir(" No Ficción")
     }
     caso 3 {
-        imprimir("🔬 Ciencia")
+        imprimir(" Ciencia")
     }
     defecto {
         imprimir("❓ Categoría desconocida")
@@ -276,7 +276,7 @@ para i = 1 hasta 6 {
 # Salida: EST-1, EST-2, EST-3, EST-4, EST-5
 ```
 
-### 🎯 Ejercicio 3: Sistema de Categorías
+###  Ejercicio 3: Sistema de Categorías
 
 ```aguila
 # ejercicio3.ag
@@ -327,6 +327,19 @@ multa = calcular_multa(10)
 imprimir(a"Multa: ${multa}")  # Multa: $25.0
 ```
 
+### Funciones Anónimas (Lambdas)
+
+Las lambdas permiten definir funciones simples en una sola línea.
+
+```aguila
+sumar = lambda a, b: a + b
+imprimir(sumar(5, 10))  # 15
+
+# Ideal para pasar como argumentos (ej. ordenamiento o filtrado)
+es_par = lambda x: x % 2 == 0
+imprimir(es_par(4))  # verdadero
+```
+
 ### Funciones con Tipos
 
 ```aguila
@@ -352,7 +365,7 @@ funcion registrar_prestamo(usuario, libro, dias) {
 registrar_prestamo("Ana", "El Principito", 14)
 ```
 
-### 🎯 Ejercicio 4: Biblioteca de Funciones
+###  Ejercicio 4: Biblioteca de Funciones
 
 ```aguila
 # ejercicio4.ag
@@ -411,8 +424,19 @@ imprimir(libros.longitud())  # 4
 
 # Iterar sobre lista
 para libro en libros {
-    imprimir(a"📚 {libro}")
+    imprimir(a" {libro}")
 }
+```
+
+### Listas por Comprensión
+
+Puedes generar listas filtrando o transformando otras de manera concisa:
+
+```aguila
+numeros = [1, 2, 3, 4, 5]
+# Crear lista con los cuadrados de los números pares
+cuadrados_pares = [x ** 2 para x en numeros si x % 2 == 0]
+imprimir(cuadrados_pares) # [4, 16]
 ```
 
 ### Métodos de Listas
@@ -476,7 +500,7 @@ tiene_isbn = libro.contiene("isbn")
 imprimir(tiene_isbn)  # falso
 ```
 
-### 🎯 Ejercicio 5: Catálogo de Libros
+###  Ejercicio 5: Catálogo de Libros
 
 ```aguila
 # ejercicio5.ag
@@ -533,7 +557,7 @@ listar_catalogo()
 # Buscar un libro
 libro_encontrado = buscar_libro("1984")
 si libro_encontrado != nulo {
-    imprimir(a"\n📖 Encontrado: {libro_encontrado['titulo']} por {libro_encontrado['autor']}")
+    imprimir(a"\n Encontrado: {libro_encontrado['titulo']} por {libro_encontrado['autor']}")
 }
 ```
 
@@ -541,46 +565,48 @@ si libro_encontrado != nulo {
 
 ## 7. Programación Orientada a Objetos
 
-### Clases Básicas
+### Clases Básicas y Modificadores de Acceso
+
+Águila soporta Programación Orientada a Objetos profesional. Por defecto, todo es público, pero puedes usar `publico`, `privado` y `protegido`. También puedes usar la convención de `_` para protegido y `__` para privado.
 
 ```aguila
 clase Libro {
-    titulo: Texto
-    autor: Texto
-    isbn: Texto
-    disponible: Logico
+    publico titulo: Texto
+    publico autor: Texto
+    _isbn: Texto           # Implícitamente protegido
+    __disponible: Logico   # Implícitamente privado
 
-    funcion iniciar(titulo, autor, isbn) {
-        este.titulo = titulo
-        este.autor = autor
-        este.isbn = isbn
-        este.disponible = verdadero
+    publico funcion iniciar(titulo, autor, isbn) {
+        yo.titulo = titulo
+        yo.autor = autor
+        yo._isbn = isbn
+        yo.__disponible = verdadero
     }
 
-    mostrar_info() {
-        imprimir(a"📚 {este.titulo}")
-        imprimir(a"   Autor: {este.autor}")
-        imprimir(a"   ISBN: {este.isbn}")
+    publico funcion mostrar_info() {
+        imprimir(a" {yo.titulo}")
+        imprimir(a"   Autor: {yo.autor}")
+        imprimir(a"   ISBN: {yo._isbn}")
         
         estado = "Disponible"
-        si no este.disponible {
+        si no yo.__disponible {
             estado = "Prestado"
         }
         imprimir(a"   Estado: {estado}")
     }
 
-    prestar() {
-        si este.disponible {
-            este.disponible = falso
-            imprimir("✅ Libro prestado exitosamente")
+    publico funcion prestar() {
+        si yo.__disponible {
+            yo.__disponible = falso
+            imprimir(" Libro prestado exitosamente")
         } sino {
-            imprimir("❌ El libro no está disponible")
+            imprimir(" El libro no esta disponible")
         }
     }
 
-    devolver() {
-        este.disponible = verdadero
-        imprimir("✅ Libro devuelto")
+    publico funcion devolver() {
+        yo.__disponible = verdadero
+        imprimir(" Libro devuelto")
     }
 }
 
@@ -595,39 +621,39 @@ mi_libro.devolver()
 
 ```aguila
 clase Usuario {
-    nombre: Texto
-    id: Numero
-    activo: Logico
+    publico nombre: Texto
+    publico id: Numero
+    publico activo: Logico
 
-    funcion iniciar(nombre, id) {
-        este.nombre = nombre
-        este.id = id
-        este.activo = verdadero
+    publico funcion iniciar(nombre, id) {
+        yo.nombre = nombre
+        yo.id = id
+        yo.activo = verdadero
     }
 
-    saludar() {
-        imprimir(a"Hola, soy {este.nombre}")
+    publico funcion saludar() {
+        imprimir(a"Hola, soy {yo.nombre}")
     }
 }
 
 clase Estudiante : Usuario {
-    carrera: Texto
-    semestre: Numero
+    publico carrera: Texto
+    publico semestre: Numero
 
-    funcion iniciar(nombre, id, carrera, semestre) {
-        este.nombre = nombre
-        este.id = id
-        este.activo = verdadero
-        este.carrera = carrera
-        este.semestre = semestre
+    publico funcion iniciar(nombre, id, carrera, semestre) {
+        yo.nombre = nombre
+        yo.id = id
+        yo.activo = verdadero
+        yo.carrera = carrera
+        yo.semestre = semestre
     }
 
-    mostrar_perfil() {
+    publico funcion mostrar_perfil() {
         imprimir("=== PERFIL DE ESTUDIANTE ===")
-        imprimir(a"Nombre: {este.nombre}")
-        imprimir(a"ID: {este.id}")
-        imprimir(a"Carrera: {este.carrera}")
-        imprimir(a"Semestre: {este.semestre}")
+        imprimir(a"Nombre: {yo.nombre}")
+        imprimir(a"ID: {yo.id}")
+        imprimir(a"Carrera: {yo.carrera}")
+        imprimir(a"Semestre: {yo.semestre}")
     }
 }
 
@@ -637,70 +663,70 @@ estudiante.saludar()
 estudiante.mostrar_perfil()
 ```
 
-### 🎯 Ejercicio 6: Sistema POO Completo
+###  Ejercicio 6: Sistema POO Completo
 
 ```aguila
 # ejercicio6.ag
 
 clase Libro {
-    titulo: Texto
-    autor: Texto
-    isbn: Texto
-    disponible: Logico
-    veces_prestado: Numero
+    publico titulo: Texto
+    publico autor: Texto
+    publico isbn: Texto
+    publico disponible: Logico
+    publico veces_prestado: Numero
 
-    funcion iniciar(titulo, autor, isbn) {
-        este.titulo = titulo
-        este.autor = autor
-        este.isbn = isbn
-        este.disponible = verdadero
-        este.veces_prestado = 0
+    publico funcion iniciar(titulo, autor, isbn) {
+        yo.titulo = titulo
+        yo.autor = autor
+        yo.isbn = isbn
+        yo.disponible = verdadero
+        yo.veces_prestado = 0
     }
 
-    a_diccionario() {
+    publico funcion a_diccionario() {
         retornar {
-            "titulo": este.titulo,
-            "autor": este.autor,
-            "isbn": este.isbn,
-            "disponible": este.disponible,
-            "veces_prestado": este.veces_prestado
+            "titulo": yo.titulo,
+            "autor": yo.autor,
+            "isbn": yo.isbn,
+            "disponible": yo.disponible,
+            "veces_prestado": yo.veces_prestado
         }
     }
 }
 
 clase Usuario {
-    nombre: Texto
-    id: Numero
-    libros_prestados: Lista
+    publico nombre: Texto
+    publico id: Numero
+    publico libros_prestados: Lista
 
-    funcion iniciar(nombre, id) {
-        este.nombre = nombre
-        este.id = id
-        este.libros_prestados = []
+    publico funcion iniciar(nombre, id) {
+        yo.nombre = nombre
+        yo.id = id
+        yo.libros_prestados = []
     }
 
-    prestar_libro(libro) {
+    publico funcion prestar_libro(libro) {
         si libro.disponible {
             libro.disponible = falso
             libro.veces_prestado = libro.veces_prestado + 1
-            este.libros_prestados.agregar(libro)
-            imprimir(a"✅ '{libro.titulo}' prestado a {este.nombre}")
+            yo.libros_prestados.agregar(libro)
+            imprimir(a" '{libro.titulo}' prestado a {yo.nombre}")
         } sino {
-            imprimir(a"❌ '{libro.titulo}' no está disponible")
+            imprimir(a" '{libro.titulo}' no esta disponible")
         }
     }
 
-    devolver_libro(libro) {
+    publico funcion devolver_libro(libro) {
         libro.disponible = verdadero
-        imprimir(a"✅ '{libro.titulo}' devuelto por {este.nombre}")
+        imprimir(a" '{libro.titulo}' devuelto por {yo.nombre}")
     }
 
-    mostrar_prestamos() {
-        imprimir(a"\n📚 Libros de {este.nombre}:")
-        si este.libros_prestados.longitud() == 0 {
+    publico funcion mostrar_prestamos() {
+        imprimir(a"\n Libros de {yo.nombre}:")
+        si yo.libros_prestados.longitud() == 0 {
             imprimir("   (No tiene libros prestados)")
         } sino {
-            para libro en este.libros_prestados {
+            para libro en yo.libros_prestados {
                 imprimir(a"   - {libro.titulo}")
             }
         }
@@ -761,35 +787,35 @@ imprimir(libro_recuperado["titulo"])  # El Principito
 
 ```aguila
 clase BibliotecaDB {
-    archivo: Texto
-    libros: Lista
+    publico archivo: Texto
+    publico libros: Lista
 
-    funcion iniciar(archivo) {
-        este.archivo = archivo
-        este.libros = []
-        este.cargar()
+    publico funcion iniciar(archivo) {
+        yo.archivo = archivo
+        yo.libros = []
+        yo.cargar()
     }
 
-    cargar() {
+    publico funcion cargar() {
         intentar {
-            contenido = fs.leer(este.archivo)
-            este.libros = json.parsear(contenido)
-            imprimir(a"✅ Cargados {este.libros.longitud()} libros")
+            contenido = fs.leer(yo.archivo)
+            yo.libros = json.parsear(contenido)
+            imprimir(a" Cargados {yo.libros.longitud()} libros")
         } capturar error {
-            imprimir("ℹ️ No hay datos previos, iniciando nueva base")
-            este.libros = []
+            imprimir(" No hay datos previos, iniciando nueva base")
+            yo.libros = []
         }
     }
 
-    guardar() {
-        texto = json.stringificar(este.libros)
-        fs.escribir(este.archivo, texto)
-        imprimir("💾 Datos guardados")
+    publico funcion guardar() {
+        texto = json.stringificar(yo.libros)
+        fs.escribir(yo.archivo, texto)
+        imprimir(" Datos guardados")
     }
 
-    agregar_libro(libro_dict) {
-        este.libros.agregar(libro_dict)
-        este.guardar()
+    publico funcion agregar_libro(libro_dict) {
+        yo.libros.agregar(libro_dict)
+        yo.guardar()
     }
 }
 ```

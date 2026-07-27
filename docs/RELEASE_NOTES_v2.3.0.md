@@ -1,6 +1,6 @@
-# 🦅 Águila v2.3.0 - Release Notes
+#  Águila v2.3.0 - Release Notes
 
-## 🚀 Nuevas Características
+##  Nuevas Características
 
 ### 1. Asignación a Índices
 **¡La característica más esperada!** Ahora puedes modificar elementos de listas y diccionarios directamente:
@@ -67,7 +67,7 @@ imprimir promedio  # 4.67
 
 ---
 
-## 📊 Comparación con Python
+##  Comparación con Python
 
 ### Antes (v2.2.8)
 ```aguila
@@ -121,7 +121,7 @@ imprimir numeros.maximo()
 
 ---
 
-## 🎯 Ejemplos Nuevos
+##  Ejemplos Nuevos
 
 ### N-Reinas Completo
 ```aguila
@@ -160,7 +160,7 @@ Ver ejemplo completo en: `aguila/ejemplos/n_reinas.ag`
 
 ---
 
-## 🔧 Mejoras Técnicas
+##  Mejoras Técnicas
 
 ### Performance
 - **Asignación a listas:** O(1) - acceso directo al vector
@@ -174,7 +174,7 @@ Ver ejemplo completo en: `aguila/ejemplos/n_reinas.ag`
 
 ---
 
-## 📦 Instalación
+##  Instalación
 
 ### NPM (Actualizar)
 ```bash
@@ -195,7 +195,7 @@ code --install-extension aguila-lang.aguila-vscode
 
 ---
 
-## 🐛 Correcciones
+##  Correcciones
 
 - Corregido: Parser ahora detecta asignación a índices correctamente
 - Corregido: `romper` funciona en bucles anidados
@@ -203,14 +203,14 @@ code --install-extension aguila-lang.aguila-vscode
 
 ---
 
-## 🚧 Limitaciones Conocidas
+##  Limitaciones Conocidas
 
 - Asignación a índices anidados (`matriz[i][j] = valor`) requiere workaround temporal
 - No hay `continuar` (continue) aún - próxima versión
 
 ---
 
-## 🎓 Recursos
+##  Recursos
 
 - [Tutorial Completo](TUTORIAL.md)
 - [Comparación con Python](AGUILA_VS_PYTHON.md)
@@ -219,7 +219,7 @@ code --install-extension aguila-lang.aguila-vscode
 
 ---
 
-## 🙏 Agradecimientos
+##  Agradecimientos
 
 Gracias a la comunidad por el feedback y sugerencias. Esta versión implementa las características más solicitadas.
 
@@ -227,4 +227,4 @@ Gracias a la comunidad por el feedback y sugerencias. Esta versión implementa l
 
 **Hecho con ❤️ para la comunidad hispanohablante**
 
-🦅 Águila - Programación en español, velocidad de Rust
+ Águila - Programación en español, velocidad de Rust

@@ -1,4 +1,4 @@
-# 🎓 Ejemplos Profesionales con Águila
+#  Ejemplos Profesionales con Águila
 
 Esta colección de ejemplos demuestra la potencia y flexibilidad del lenguaje Águila para casos de uso reales y algoritmos complejos.
 

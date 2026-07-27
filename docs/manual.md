@@ -1,10 +1,10 @@
-# 🦅 Manual de Referencia: Lenguaje Águila (v2.7.5)
+# Manual de Referencia: Lenguaje Águila (v2.8.1)
 
 Documentación completa del lenguaje de programación Águila.
 
 ---
 
-## 📑 Índice
+##  Índice
 1. [Introducción](#introducción)
 2. [Sintaxis Básica](#sintaxis-básica)
    - [Variables y Constantes](#variables-y-constantes)
@@ -122,6 +122,15 @@ Palabras clave de control:
 *   `romper`: Termina el bucle inmediatamente.
 *   `continuar`: Salta a la siguiente iteración.
 
+### Comprensión de Listas
+Permite construir listas filtrando o transformando elementos de otra colección de forma concisa.
+
+```aguila
+let lista = [1, 2, 3, 4, 5]
+let cuadrados = [x ** 2 para x en lista si x % 2 == 0]
+# cuadrados será [4, 16]
+```
+
 ---
 
 ## 5. Funciones
@@ -133,8 +142,9 @@ funcion sumar(a, b) {
     retornar a + b
 }
 
-# Funciones flecha / anónimas
-let duplicar = fn(x) -> x * 2
+# Funciones Anónimas (Lambdas)
+let duplicar = lambda x: x * 2
+let sumar = lambda a, b: a + b
 ```
 
 ### Recursión
@@ -151,28 +161,38 @@ funcion fib(n) {
 
 ## 6. Programación Orientada a Objetos
 
-Águila usa un modelo de clases clásico.
+Águila usa un modelo de clases clásico con encapsulamiento profesional (explícito e implícito).
 
 ```aguila
 clase Animal {
-    funcion init(nombre) {
+    publico nombre = ""
+    _edad = 0  # Implícitamente Protegido
+
+    publico funcion init(nombre, edad) {
         yo.nombre = nombre  # 'yo' equivale a 'self' o 'this'
+        yo._edad = edad
     }
 
-    funcion hablar() {
+    privado funcion __secreto() {
+        imprimir("Solo accesible desde adentro")
+    }
+
+    publico funcion hablar() {
         imprimir("...")
     }
 }
 
 clase Perro : Animal {     # Herencia con ':'
-    funcion hablar() {
+    publico funcion hablar() {
         imprimir("Guau!")
     }
 }
 
-let firulais = nuevo Perro("Firulais")
+let firulais = nuevo Perro("Firulais", 3)
 firulais.hablar()
 ```
+
+Los modificadores de visibilidad pueden ser `publico`, `privado` y `protegido`. Alternativamente, puedes usar las convenciones de `_` (protegido) y `__` (privado).
 
 ---
 
@@ -240,5 +260,5 @@ intentar {
 
 ---
 <div align="center">
-Águila v2.7.5 • <a href="https://aguila-lang.org">Simplicidad y Potencia</a>
+Águila v2.8.1 • <a href="https://aguila-lang.org">Simplicidad y Potencia</a>
 </div>

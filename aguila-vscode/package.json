@@ -2,7 +2,8 @@
     "name": "aguila-vscode",
     "displayName": "Lenguaje Águila",
     "description": "Soporte para el lenguaje de programación Aguila",
-    "version": "2.7.6",
+    "version": "2.7.7",
+    "homepage": "https://aguila.compilandocode.com/biblioteca",
     "publisher": "aguila-lang",
     "author": {
         "name": "Emerson Espinoza",
