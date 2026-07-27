@@ -64,7 +64,7 @@
         "prefix": "clase",
         "body": [
             "clase ${1:Nombre} {",
-            "\tconstructor(${2:parametros}) {",
+            "\tpublico constructor(${2:parametros}) {",
             "\t\t$0",
             "\t}",
             "}"
@@ -153,5 +153,40 @@
         "prefix": "conjunto",
         "body": "conjunto([${1:elementos}])",
         "description": "Crear conjunto"
+    },
+    "Lambda (Pythonic)": {
+        "prefix": "lambda",
+        "body": "lambda ${1:args}: ${2:expr}",
+        "description": "Función anónima de una línea (Pythonic)"
+    },
+    "Lambda (Rust)": {
+        "prefix": "lambdarust",
+        "body": "|${1:args}| ${2:expr}",
+        "description": "Función anónima (Rust)"
+    },
+    "Lambda (Clásica)": {
+        "prefix": "lambdafn",
+        "body": "fn(${1:args}) -> ${2:expr}",
+        "description": "Función anónima (Clásica)"
+    },
+    "List Comprehension": {
+        "prefix": "comprension",
+        "body": "[${1:expr} para ${2:item} en ${3:lista} si ${4:condicion}]",
+        "description": "Lista por comprensión"
+    },
+    "Público": {
+        "prefix": "publico",
+        "body": "publico ${1:metodo_o_propiedad}",
+        "description": "Modificador de acceso público"
+    },
+    "Privado": {
+        "prefix": "privado",
+        "body": "privado ${1:metodo_o_propiedad}",
+        "description": "Modificador de acceso privado"
+    },
+    "Protegido": {
+        "prefix": "protegido",
+        "body": "protegido ${1:metodo_o_propiedad}",
+        "description": "Modificador de acceso protegido"
     }
 }

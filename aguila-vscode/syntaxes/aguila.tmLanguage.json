@@ -41,14 +41,18 @@
             "patterns": [
                 {
                     "name": "keyword.control.aguila",
-                    "match": "\\b(si|sino|mientras|para|en|funcion|fn|retornar|romper|continuar|clase|nuevo|intentar|capturar|finalmente|lanzar|global|nolocal|pasar|eliminar|con|asincrono|esperar|ceder|segun|caso|defecto|imprime|imprimir|afirmar|let|yo|hasta)\\b"
+                    "match": "\\b(si|sino|mientras|para|en|funcion|fn|lambda|retornar|romper|continuar|clase|nuevo|intentar|capturar|finalmente|lanzar|global|nolocal|pasar|eliminar|con|asincrono|esperar|ceder|segun|caso|defecto|imprime|imprimir|afirmar|let|yo|hasta)\\b"
                 },
                 {
                     "name": "keyword.control.import.aguila",
                     "match": "\\b(importar|desde|como)\\b"
                 },
                 {
-                    "name": "keyword.operator.logical.aguila",
+                    "name": "storage.modifier.aguila",
+                    "match": "\\b(publico|privado|protegido)\\b"
+                },
+                {
+                    "name": "keyword.control.logical.aguila",
                     "match": "\\b(y|o|no)\\b"
                 },
                 {
@@ -57,7 +61,7 @@
                 },
                 {
                     "name": "variable.language.this.aguila",
-                    "match": "\\b(this|yo|este)\\b"
+                    "match": "\\b(this|self|yo|este)\\b"
                 },
                 {
                     "name": "support.class.builtin.aguila",
@@ -219,6 +223,10 @@
                 {
                     "name": "keyword.operator.arrow.aguila",
                     "match": "(->)"
+                },
+                {
+                    "name": "keyword.operator.bitwise.aguila",
+                    "match": "(\\||\\&|\\^|<<|>>)"
                 }
             ]
         },
