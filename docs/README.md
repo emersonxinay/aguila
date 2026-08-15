@@ -4,6 +4,8 @@ Bienvenido al centro de documentación del lenguaje Águila. Aquí encontrarás 
 
 ##  Empezando
 
+*   **[🚀 Novedades en v2.9.1 y Accesibilidad](NOVEDADES_v2.9.1.md):** Descubre las últimas características de la versión actual y nuestro enfoque inclusivo.
+
 *   **[Tutorial Completo](tutorial.md):** La mejor forma de empezar. Aprende Águila desde cero con ejemplos prácticos.
 *   **[Águila vs Python](vs_python.md):** Si vienes de Python, esta guía te mostrará las similitudes y diferencias clave.
 

@@ -45,7 +45,7 @@
                 },
                 {
                     "name": "keyword.control.import.aguila",
-                    "match": "\\b(importar|desde|como)\\b"
+                    "match": "\\b(importar|usar|desde|como)\\b"
                 },
                 {
                     "name": "storage.modifier.aguila",
@@ -153,7 +153,7 @@
             "patterns": [
                 {
                     "name": "support.function.builtin.aguila",
-                    "match": "\\b(leer|afirmar|conjunto|imprime|imprimir|reloj|tipo|longitud|entero|decimal|texto)\\b"
+                    "match": "\\b(leer|ingresar|afirmar|conjunto|imprime|imprimir|reloj|tipo|longitud|entero|decimal|texto)\\b"
                 },
                 {
                     "match": "\\b(funcion|fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(\\()",

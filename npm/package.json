@@ -1,6 +1,6 @@
 {
     "name": "aguila-lang",
-    "version": "2.7.9",
+    "version": "2.9.1",
     "description": "Lenguaje de programación Águila - Sintaxis en español, velocidad de Rust",
     "homepage": "https://aguila.compilandocode.com/biblioteca",
     "bin": {

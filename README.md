@@ -14,12 +14,13 @@
 
 ---
 
-## 🚀 Novedades en v2.8.1
-- **Programación Orientada a Objetos Profesional:** Soporte completo para encapsulamiento con modificadores de visibilidad explícitos (`publico`, `privado`, `protegido`) e implícitos (convenciones `_` y `__`).
-- **Lambdas (Funciones Anónimas):** ¡Escribe funciones de una sola línea al instante! (Ej: `sumar = lambda a, b: a + b`).
-- **Listas por Comprensión:** Crea y filtra listas de forma elegante y veloz estilo Python (Ej: `pares = [x para x en lista si x % 2 == 0]`).
-- **Resolución de Ámbito Mejorada:** Integración nativa y veloz de la palabra clave `yo` (`self`) en toda la Máquina Virtual.
-- **Todo lo de v2.8.0:** Interpolación nativa (`a"Hola {x}"`), `mate.redondear`, y sistema de errores 100% accesibles.
+## 🚀 Novedades en v2.9.1
+- **Sistema de Excepciones:** Introducción de los bloques nativos `intentar` y `capturar` para el manejo seguro de errores en tiempo de ejecución.
+- **Gestión de Módulos Moderna:** Nueva palabra reservada `importar` (se mantiene `usar` por compatibilidad hacia atrás).
+- **Entrada Estándar:** Nueva función global `leer()` para recibir texto interactivo desde la terminal (se mantiene `ingresar()` como alias).
+- **Control Manual de Memoria:** Nuevo método `.limpiar()` en colecciones (Listas y Diccionarios) para liberar referencias y memoria proactivamente (vital para rendimiento a 60 FPS en videojuegos).
+- **Rendimiento Extremo (LTO):** Reestructuración interna para una compilación ultra-optimizada y preparada para despliegues a producción.
+- **Todo lo de v2.8.1:** Lambdas, Listas por comprensión, y OOP con visibilidad estricta.
 
 ---
 
@@ -31,6 +32,18 @@
 *   **Potencia Profesional:** No es un juguete. Es un lenguaje compilado capaz de ejecutar algoritmos complejos y aplicaciones reales.
 *   **Puente Universal:** Al aprender la lógica y sintaxis con Águila, **dominar luego lenguajes en inglés** (como Python o JavaScript) será mucho más rápido y natural, ya que los conceptos son idénticos.
 *   **Ecosistema Moderno:** Cuenta con su propio gestor de paquetes, extensión oficial para VS Code y herramientas de desarrollo de clase mundial.
+
+---
+
+## ♿ Accesibilidad: El Primer Lenguaje para Programadores con Discapacidad Visual
+
+Águila se enorgullece de ser pionero en **Accesibilidad Inclusiva (A11Y)** desde el núcleo del compilador, pensando siempre en las personas ciegas o con baja visión:
+
+1. **Lectura de Errores Optimizada:** A diferencia de lenguajes tradicionales que arrojan muros de texto técnico impronunciables, los mensajes de error de Águila están diseñados sintácticamente para que los **Lectores de Pantalla (NVDA, JAWS, VoiceOver)** los lean de forma humana, clara y directa.
+2. **Terminal Interactiva (REPL) Amigable:** La consola de Águila no tiene ruido visual. Respeta los estándares de salto de línea y delimitadores para que el cursor del lector de pantalla se posicione exactamente donde el desarrollador ciego lo necesita.
+3. **Manejo de Excepciones Táctil:** Con los nuevos bloques `intentar` y `capturar`, el programador ciego tiene el control absoluto de cómo su aplicación interactúa y reporta fallos, permitiéndole crear aplicaciones inclusivas para otros usuarios.
+
+*Nuestro objetivo es que cualquier persona, sin importar su nivel de visión, pueda desarrollar sistemas backend avanzados y lógica computacional fluida en su propio idioma.*
 
 ---
 
